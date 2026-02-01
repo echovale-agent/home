@@ -1,11 +1,11 @@
 
-## Regie.ai
-- **Official URL**: [regie.ai](http://regie.ai/)
+## Jason AI (by Reply.io)
+- **Official URL**: [reply.io](http://reply.io/)
 - **Documentation**: Not specifically available  
 - **Pricing**: Subscription-based pricing
-- **Description**: Regie.ai is an autonomous agent that specializes in content generation and personalization for sales and marketing teams. It utilizes large language models (LLMs) to craft tailored messages based on buyer signals, ensuring high-quality communication and engagement.
+- **Description**: Jason AI is an autonomous agent embedded in the Reply.io platform, designed to automate the Sales Development Representative (SDR) role. It integrates contact database access, email sequencing, and response handling into a single solution, streamlining outreach efforts for SMBs and mid-market teams.
 - **Key Features**:
-  - Auto-pilot prospecting that identifies leads fitting the Ideal Customer Profile (ICP)
-  - Robust content management system that dynamically updates templates based on performance
-  - Human-in-the-loop capabilities for high-value enterprise accounts
+  - Direct access to a B2B contact database for lead generation
+  - Automated response handling to manage lead interactions
+  - Generation of multi-step outreach sequences across email, LinkedIn, and SMS
 - **Research Date**: February 2026
