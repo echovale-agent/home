@@ -4,117 +4,576 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonomous Agent APIs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --bg-primary: #0a0e27;
+            --bg-secondary: #111632;
+            --bg-card: #1a1f3a;
             --accent-primary: #00ff88;
-            --text-color: #ffffff;
-            --card-bg: #1c1f3f;
-            --card-shadow: rgba(0, 0, 0, 0.2);
+            --accent-secondary: #0084ff;
+            --text-primary: #e8edf4;
+            --text-secondary: #8892b0;
+            --border-color: #2a2f4a;
+            --shadow: rgba(0, 255, 136, 0.1);
         }
+
         body {
             font-family: 'Space Mono', monospace;
-            background: linear-gradient(270deg, #0a0e27, #1c1f3f);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
             overflow-x: hidden;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        input {
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 132, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 60px 0 40px;
+            border-bottom: 1px solid var(--border-color);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 20px;
         }
-        .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 4px 8px var(--card-shadow);
-            transition: transform 0.2s;
+
+        h1 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
         }
-        .card:hover {
-            transform: scale(1.05);
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-weight: 400;
         }
-        .loading, .error {
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .github-link:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 30px;
+            padding: 30px 0;
+            flex-wrap: wrap;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 250px;
+            gap: 15px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .search-box {
+            grid-column: 1;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px var(--shadow);
+        }
+
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* API Cards Grid */
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .api-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            animation: scaleIn 0.5s ease-out both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .api-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .api-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .api-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .api-name {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .api-type {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent-primary);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .api-description {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .api-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .api-link:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Loading State */
+        .loading {
             text-align: center;
-            font-size: 1.2em;
+            padding: 60px 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 3px;
+            background: var(--bg-secondary);
+            margin: 0 auto;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loading-bar::after {
+            content: '';
+            display: block;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            animation: loading 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(350%); }
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .footer-emoji {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                gap: 20px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Explore Autonomous Agent APIs</h1>
-    <input type="text" id="search" placeholder="Search APIs...">
-    <div id="loading" class="loading" style="display:none;">Loading...</div>
-    <div id="error" class="error" style="display:none;">Error loading data.</div>
-    <div id="api-container" class="grid"></div>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>Autonomous Agent APIs</h1>
+                    <p class="subtitle">Curated directory for AI agent developers</p>
+                </div>
+                <a href="https://github.com/echovale-agent/home/blob/main/autonomous-agent-apis.json" class="github-link" target="_blank">
+                    <span>📁</span>
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-value" id="totalApis">--</div>
+                    <div class="stat-label">Total APIs</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="totalCategories">--</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="lastUpdate">--</div>
+                    <div class="stat-label">Last Updated</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search APIs by name, description, or tags...">
+            </div>
+            <select id="typeFilter">
+                <option value="">All Types</option>
+            </select>
+        </div>
+
+        <div id="apiContainer">
+            <div class="loading">
+                <div class="loading-text">Loading API directory...</div>
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-emoji">🤖</div>
+            <p>Maintained by autonomous backend agent | Updated weekly</p>
+            <p style="margin-top: 8px; font-size: 11px;">Last refreshed: <span id="footerDate">--</span></p>
+        </footer>
+    </div>
 
     <script>
-        async function fetchData() {
-            const apiContainer = document.getElementById('api-container');
-            const loading = document.getElementById('loading');
-            const error = document.getElementById('error');
-            loading.style.display = 'block';
-            error.style.display = 'none';
-            apiContainer.innerHTML = '';
+        let allApis = [];
+        let filteredApis = [];
 
+        // Fetch and load data
+        async function loadData() {
             try {
-                const response = await fetch('autonomous-agent-apis.json');
-                if (!response.ok) throw new Error('Network response was not ok');
+                const response = await fetch('https://raw.githubusercontent.com/echovale-agent/home/main/autonomous-agent-apis.json');
                 const data = await response.json();
-                displayData(data);
-            } catch (err) {
-                console.error(err);
-                loading.style.display = 'none';
-                error.style.display = 'block';
+                
+                allApis = data.autonomous_agent_apis;
+                filteredApis = [...allApis];
+                
+                updateStats(data);
+                populateFilters();
+                renderApis();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('apiContainer').innerHTML = `
+                    <div class="no-results">
+                        <p>⚠️ Failed to load API data</p>
+                        <p style="margin-top: 10px; font-size: 12px;">Please try refreshing the page</p>
+                    </div>
+                `;
             }
         }
 
-        function displayData(data) {
-            const apiContainer = document.getElementById('api-container');
-            apiContainer.innerHTML = '';
-
-            data.forEach(api => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <h2>${api.name}</h2>
-                    <p>${api.description}</p>
-                    <p><strong>Type:</strong> ${api.category}</p>
-                    <p><strong>Tags:</strong> ${api.pricing}</p>
-                    <a href="${api.url}" target="_blank" style="color: var(--accent-primary);">Learn More</a>
-                `;
-                apiContainer.appendChild(card);
-            });
-            document.getElementById('loading').style.display = 'none';
+        // Update statistics
+        function updateStats(data) {
+            const types = new Set(data.autonomous_agent_apis.map(api => api.type));
+            
+            document.getElementById('totalApis').textContent = data.autonomous_agent_apis.length;
+            document.getElementById('totalCategories').textContent = types.size;
+            
+            // Use metadata.date if available, otherwise use current date
+            const updateDate = data.metadata?.date ? new Date(data.metadata.date) : new Date();
+            document.getElementById('lastUpdate').textContent = updateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            document.getElementById('footerDate').textContent = updateDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         }
 
-        document.getElementById('search').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                const title = card.querySelector('h2').textContent.toLowerCase();
-                const description = card.querySelector('p').textContent.toLowerCase();
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
+        // Populate filter dropdowns
+        function populateFilters() {
+            const types = new Set();
+            const allTags = new Set();
 
-        window.onload = fetchData;
+            allApis.forEach(api => {
+                types.add(api.type);
+                api.tags.forEach(tag => allTags.add(tag));
+            });
+
+            populateSelect('typeFilter', Array.from(types).sort());
+        }
+
+        function populateSelect(id, options) {
+            const select = document.getElementById(id);
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+        }
+
+        // Render API cards
+        function renderApis() {
+            const container = document.getElementById('apiContainer');
+            
+            if (filteredApis.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <p>No APIs found matching your filters</p>
+                        <p style="margin-top: 10px; font-size: 12px;">Try adjusting your search criteria</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `<div class="api-grid">${filteredApis.map((api, index) => `
+                <div class="api-card" style="animation-delay: ${index * 0.05}s">
+                    <div class="card-header">
+                        <h3 class="api-name">${api.name}</h3>
+                        <span class="api-type">${api.type}</span>
+                    </div>
+                    
+                    <p class="api-description">${api.description}</p>
+                    
+                    <div class="tags">
+                        ${api.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    
+                    <a href="${api.url}" target="_blank" class="api-link">
+                        View Documentation →
+                    </a>
+                </div>
+            `).join('')}</div>`;
+        }
+
+        // Filter functions
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            filteredApis = allApis.filter(api => {
+                const matchesSearch = !searchTerm || 
+                    api.name.toLowerCase().includes(searchTerm) ||
+                    api.description.toLowerCase().includes(searchTerm) ||
+                    api.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                const matchesType = !typeFilter || api.type === typeFilter;
+
+                return matchesSearch && matchesType;
+            });
+
+            renderApis();
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('typeFilter').addEventListener('change', applyFilters);
+
+        // Initialize
+        loadData();
     </script>
 </body>
 </html>
