@@ -163,14 +163,14 @@
         /* Controls */
         .controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 1fr 250px;
             gap: 15px;
             margin-bottom: 40px;
             animation: fadeIn 0.8s ease-out 0.4s both;
         }
 
         .search-box {
-            grid-column: 1 / -1;
+            grid-column: 1;
         }
 
         input, select {
@@ -281,42 +281,6 @@
             font-size: 13px;
             line-height: 1.6;
             margin-bottom: 16px;
-        }
-
-        .api-meta {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 8px 12px;
-            font-size: 12px;
-            margin-bottom: 16px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-        }
-
-        .meta-label {
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .meta-value {
-            color: var(--text-primary);
-        }
-
-        .industries {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .industry-tag {
-            padding: 4px 8px;
-            background: rgba(0, 132, 255, 0.1);
-            border: 1px solid rgba(0, 132, 255, 0.3);
-            border-radius: 4px;
-            font-size: 11px;
-            color: var(--accent-secondary);
         }
 
         .tags {
@@ -471,12 +435,6 @@
             <select id="typeFilter">
                 <option value="">All Types</option>
             </select>
-            <select id="industryFilter">
-                <option value="">All Industries</option>
-            </select>
-            <select id="pricingFilter">
-                <option value="">All Pricing</option>
-            </select>
         </div>
 
         <div id="apiContainer">
@@ -528,7 +486,8 @@
             document.getElementById('totalApis').textContent = data.autonomous_agent_apis.length;
             document.getElementById('totalCategories').textContent = types.size;
             
-            const updateDate = new Date(data.search_metadata.search_date);
+            // Use metadata.date if available, otherwise use current date
+            const updateDate = data.metadata?.date ? new Date(data.metadata.date) : new Date();
             document.getElementById('lastUpdate').textContent = updateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             document.getElementById('footerDate').textContent = updateDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         }
@@ -536,18 +495,14 @@
         // Populate filter dropdowns
         function populateFilters() {
             const types = new Set();
-            const industries = new Set();
-            const pricingModels = new Set();
+            const allTags = new Set();
 
             allApis.forEach(api => {
                 types.add(api.type);
-                api.industry_focus.forEach(ind => industries.add(ind));
-                pricingModels.add(api.pricing_model.split('|')[0].trim());
+                api.tags.forEach(tag => allTags.add(tag));
             });
 
             populateSelect('typeFilter', Array.from(types).sort());
-            populateSelect('industryFilter', Array.from(industries).sort());
-            populateSelect('pricingFilter', Array.from(pricingModels).sort());
         }
 
         function populateSelect(id, options) {
@@ -583,24 +538,6 @@
                     
                     <p class="api-description">${api.description}</p>
                     
-                    <div class="api-meta">
-                        <span class="meta-label">Pricing:</span>
-                        <span class="meta-value">${api.pricing_model}</span>
-                        
-                        <span class="meta-label">Auth:</span>
-                        <span class="meta-value">${api.authentication}</span>
-                        
-                        <span class="meta-label">Docs:</span>
-                        <span class="meta-value">${api.documentation_quality}</span>
-                        
-                        <span class="meta-label">Rate Limit:</span>
-                        <span class="meta-value">${api.rate_limits}</span>
-                    </div>
-                    
-                    <div class="industries">
-                        ${api.industry_focus.map(ind => `<span class="industry-tag">${ind}</span>`).join('')}
-                    </div>
-                    
                     <div class="tags">
                         ${api.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                     </div>
@@ -616,8 +553,6 @@
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
-            const industryFilter = document.getElementById('industryFilter').value;
-            const pricingFilter = document.getElementById('pricingFilter').value;
 
             filteredApis = allApis.filter(api => {
                 const matchesSearch = !searchTerm || 
@@ -626,10 +561,8 @@
                     api.tags.some(tag => tag.toLowerCase().includes(searchTerm));
                 
                 const matchesType = !typeFilter || api.type === typeFilter;
-                const matchesIndustry = !industryFilter || api.industry_focus.includes(industryFilter);
-                const matchesPricing = !pricingFilter || api.pricing_model.includes(pricingFilter);
 
-                return matchesSearch && matchesType && matchesIndustry && matchesPricing;
+                return matchesSearch && matchesType;
             });
 
             renderApis();
@@ -638,8 +571,6 @@
         // Event listeners
         document.getElementById('searchInput').addEventListener('input', applyFilters);
         document.getElementById('typeFilter').addEventListener('change', applyFilters);
-        document.getElementById('industryFilter').addEventListener('change', applyFilters);
-        document.getElementById('pricingFilter').addEventListener('change', applyFilters);
 
         // Initialize
         loadData();
