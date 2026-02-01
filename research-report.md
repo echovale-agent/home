@@ -1,24 +1,24 @@
-## Kore.ai
-- **Official URL**: [kore.ai](http://kore.ai/)
-- **Documentation**: [Kore.ai Documentation](https://www.kore.ai/ai-agent-platform)  
-- **Pricing**: Flexible models including session-based, usage-based, per-seat, and pay-as-you-go options
-- **Description**: Kore.ai is an enterprise-grade agentic AI platform that enables organizations to design, deploy, and manage AI agents across various business functions, including customer support and operations. Its multi-agent orchestration engine allows for collaborative and autonomous execution of tasks across systems.
+
+## SalesCloser.ai
+- **Official URL**: [salescloser.ai](https://salescloser.ai/best-autonomous-ai-sales-agents/)
+- **Documentation**: Not specifically available  
+- **Pricing**: Subscription-based pricing
+- **Description**: SalesCloser.ai is an autonomous AI sales agent designed to handle complex, human-centric interactions. It operates across various channels including voice and video, enabling it to conduct discovery calls and demos while managing conversations effectively.
 - **Key Features**:
-  - Multi-agent orchestration for seamless collaboration
-  - Enterprise-grade AI governance and observability
-  - 250+ plug-and-play integrations
-  - No-code and pro-code development options
-  - AI governance dashboard for compliance and security
+  - Adaptive persona capable of navigating nuanced conversations
+  - Video and voice capabilities for real-time interaction
+  - Multilingual support for global outreach
+  - Autonomous scheduling to streamline meeting arrangements
 - **Research Date**: February 2026
 
-## Glean
-- **Official URL**: [glean.com](https://www.glean.com)
+## Air AI
+- **Official URL**: [airai.com](http://airai.com)
 - **Documentation**: Not specifically available  
-- **Pricing**: User-based subscription model
-- **Description**: Glean is a knowledge discovery platform that unifies data across various business applications, enhancing the search experience for employees. It focuses on contextual search and role-aware recommendations to facilitate efficient information retrieval.
+- **Pricing**: High upfront and usage-based pricing
+- **Description**: Air AI is designed for high-volume cold calling and leverages advanced voice capabilities to conduct calls at scale. It mimics human conversational patterns, making it suitable for organizations that rely on massive outbound calling efforts.
 - **Key Features**:
-  - Unified enterprise search capabilities
-  - AI assistants for natural language question answering
-  - Permissions-aware search and governance
-  - Contextual knowledge graph for personalized results
+  - Mimics human conversational patterns including pauses and interruptions
+  - Infinite memory to retain conversation context
+  - Ability to manage thousands of simultaneous calls
+  - Excellent at handling standard objections and steering bookings
 - **Research Date**: February 2026
