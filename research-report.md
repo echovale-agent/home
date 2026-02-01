@@ -1,11 +1,11 @@
 
-## Jason AI (by Reply.io)
-- **Official URL**: [reply.io](http://reply.io/)
+## Warmly
+- **Official URL**: [warmly.ai](https://www.warmly.ai/)
 - **Documentation**: Not specifically available  
-- **Pricing**: Subscription-based pricing
-- **Description**: Jason AI is an autonomous agent embedded in the Reply.io platform, designed to automate the Sales Development Representative (SDR) role. It integrates contact database access, email sequencing, and response handling into a single solution, streamlining outreach efforts for SMBs and mid-market teams.
+- **Pricing**: Not specified
+- **Description**: Warmly is an intent-based engagement platform that identifies visitors to a company's website and engages them in real-time. It focuses on warm outreach rather than cold calling or emailing, enabling companies to interact with potential clients as they browse their site.
 - **Key Features**:
-  - Direct access to a B2B contact database for lead generation
-  - Automated response handling to manage lead interactions
-  - Generation of multi-step outreach sequences across email, LinkedIn, and SMS
+  - De-anonymization to identify visitors and gather company information
+  - Instant outreach capabilities to engage visitors immediately
+  - Personalized video overlays to prompt visitors to start a chat
 - **Research Date**: February 2026
