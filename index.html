@@ -4,121 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonomous Agent APIs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --accent-primary: #00ff88;
+            --text-color: #ffffff;
+            --card-bg: #1c1f3f;
+            --card-shadow: rgba(0, 0, 0, 0.2);
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Space Mono', monospace;
+            background: linear-gradient(270deg, #0a0e27, #1c1f3f);
+            color: var(--text-color);
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
             padding: 20px;
+            overflow-x: hidden;
+        }
+        h1 {
             text-align: center;
+            margin-bottom: 20px;
         }
-        .search-container {
-            margin: 10px auto;
-            display: flex;
-            justify-content: center;
-        }
-        .search-container input, .search-container select {
+        input {
+            width: 100%;
             padding: 10px;
-            margin: 0 5px;
             border: none;
             border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
         }
         .card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin: 10px;
+            background: var(--card-bg);
+            border-radius: 10px;
             padding: 15px;
+            box-shadow: 0 4px 8px var(--card-shadow);
             transition: transform 0.2s;
         }
         .card:hover {
             transform: scale(1.05);
         }
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        footer {
-            margin-top: auto;
+        .loading, .error {
             text-align: center;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-        }
-        @media (max-width: 600px) {
-            .search-container {
-                flex-direction: column;
-            }
-            .search-container input, .search-container select {
-                width: 100%;
-                margin: 5px 0;
-            }
+            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Autonomous Agent APIs</h1>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search...">
-            <select id="filterSelect">
-                <option value="">Filter by Category</option>
-                <option value="API">API</option>
-                <option value="Framework">Framework</option>
-                <option value="Platform">Platform</option>
-            </select>
-            <button onclick="fetchData()">Search</button>
-        </div>
-    </header>
-    <div id="loading" style="display: none;">Loading...</div>
-    <div id="error" style="color: red; display: none;">Failed to load data.</div>
-    <div id="cardContainer" class="card-container"></div>
-    <footer>
-        <p id="stats">Total APIs: 0</p>
-    </footer>
+    <h1>Explore Autonomous Agent APIs</h1>
+    <input type="text" id="search" placeholder="Search APIs...">
+    <div id="loading" class="loading" style="display:none;">Loading...</div>
+    <div id="error" class="error" style="display:none;">Error loading data.</div>
+    <div id="api-container" class="grid"></div>
 
     <script>
         async function fetchData() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
+            const apiContainer = document.getElementById('api-container');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            apiContainer.innerHTML = '';
+
             try {
                 const response = await fetch('autonomous-agent-apis.json');
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 displayData(data);
-            } catch (error) {
-                document.getElementById('error').style.display = 'block';
-            } finally {
-                document.getElementById('loading').style.display = 'none';
+            } catch (err) {
+                console.error(err);
+                loading.style.display = 'none';
+                error.style.display = 'block';
             }
         }
 
         function displayData(data) {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const filterSelect = document.getElementById('filterSelect').value;
-            const filteredData = data.filter(item => {
-                const matchesSearch = item.name.toLowerCase().includes(searchInput);
-                const matchesFilter = filterSelect ? item.category === filterSelect : true;
-                return matchesSearch && matchesFilter;
-            });
+            const apiContainer = document.getElementById('api-container');
+            apiContainer.innerHTML = '';
 
-            const cardContainer = document.getElementById('cardContainer');
-            cardContainer.innerHTML = ''; // Clear previous cards
-            filteredData.forEach(item => {
+            data.forEach(api => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `<h2>${item.name}</h2><p>${item.description}</p><p>Category: ${item.category}</p><p>Pricing: ${item.pricing}</p><a href="${item.url}" target="_blank">Learn more</a>`;
-                cardContainer.appendChild(card);
+                card.innerHTML = `
+                    <h2>${api.name}</h2>
+                    <p>${api.description}</p>
+                    <p><strong>Type:</strong> ${api.category}</p>
+                    <p><strong>Tags:</strong> ${api.pricing}</p>
+                    <a href="${api.url}" target="_blank" style="color: var(--accent-primary);">Learn More</a>
+                `;
+                apiContainer.appendChild(card);
             });
-            document.getElementById('stats').innerText = `Total APIs: ${filteredData.length}`;
+            document.getElementById('loading').style.display = 'none';
         }
+
+        document.getElementById('search').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const title = card.querySelector('h2').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
 
         window.onload = fetchData;
     </script>
