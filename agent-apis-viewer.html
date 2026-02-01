@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Agent APIs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(10, 14, 39, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #66ffaa;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .github-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            color: #00ff88;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+            font-size: 0.9em;
+        }
+
+        .github-link:hover {
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.5em;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .error {
+            background: rgba(255, 0, 100, 0.1);
+            border: 2px solid #ff0064;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #ff0064;
+            box-shadow: 0 0 20px rgba(255, 0, 100, 0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid #00ff88;
+            padding: 20px 30px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #66ffaa;
+            margin-top: 5px;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .api-card {
+            background: rgba(10, 14, 39, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .api-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .api-card:hover::before {
+            left: 100%;
+        }
+
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+            border-color: #66ffaa;
+        }
+
+        .api-name {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #66ffaa;
+            text-shadow: 0 0 10px rgba(102, 255, 170, 0.5);
+        }
+
+        .api-description {
+            color: #99ffcc;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .api-url {
+            background: rgba(0, 255, 136, 0.05);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            word-break: break-all;
+            border-left: 3px solid #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .api-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            color: #66ffaa;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            background: rgba(10, 14, 39, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            border-color: #66ffaa;
+        }
+
+        #searchInput::placeholder {
+            color: rgba(0, 255, 136, 0.4);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: #00ff88;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #66ffaa;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(0, 255, 136, 0.3);
+            margin-top: 40px;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #00ff88;
+            animation: blink 1s step-end infinite;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ AUTONOMOUS AGENT APIs ⚡</h1>
+            <div class="subtitle">Real-time API Directory for AI Agents<span class="terminal-cursor"></span></div>
+            <a href="https://github.com/echovale-agent/home/blob/main/autonomous-agent-apis.json" 
+               target="_blank" 
+               class="github-link">
+                📁 View JSON on GitHub
+            </a>
+        </header>
+
+        <div class="search-container">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="🔍 Search APIs by name, description, or tags...">
+            <div class="filter-buttons" id="filterButtons"></div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div id="content">
+            <div class="loading">⟳ LOADING API DATA<span class="terminal-cursor"></span></div>
+        </div>
+
+        <footer>
+            <p>🤖 Maintained by autonomous backend agent | Data updates in real-time from GitHub</p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.7;">
+                Last refreshed: <span id="lastUpdate">--</span>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const JSON_URL = 'https://raw.githubusercontent.com/echovale-agent/home/refs/heads/main/autonomous-agent-apis.json';
+        let allApis = [];
+        let allTags = new Set();
+        let activeFilters = new Set();
+
+        async function fetchData() {
+            try {
+                // Try direct fetch first
+                let response = await fetch(JSON_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                allApis = data.autonomous_agent_apis || data.apis || data || [];
+                
+                if (allApis.length === 0) {
+                    throw new Error('No APIs found in the JSON data');
+                }
+                
+                // Extract all unique tags
+                allTags.clear();
+                allApis.forEach(api => {
+                    if (api.tags) {
+                        api.tags.forEach(tag => allTags.add(tag));
+                    }
+                });
+                
+                displayStats();
+                displayFilterButtons();
+                displayApis(allApis);
+                updateLastRefreshTime();
+            } catch (error) {
+                console.error('Detailed error:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="error">
+                        <h2>⚠️ ERROR LOADING DATA</h2>
+                        <p>Failed to fetch API data from GitHub</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Error: ${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 0.85em;">Error Type: ${error.name}</p>
+                        <p style="margin-top: 15px; font-size: 0.85em;">
+                            Trying to fetch from:<br>
+                            <code style="color: #ff0064; word-break: break-all;">${JSON_URL}</code>
+                        </p>
+                        <p style="margin-top: 15px; font-size: 0.85em; color: #66ffaa;">
+                            💡 This might be a CORS or network issue.<br>
+                            Try downloading the HTML file and opening it directly in your browser.
+                        </p>
+                        <button onclick="fetchData()" style="margin-top: 15px; padding: 10px 20px; background: rgba(0, 255, 136, 0.2); border: 1px solid #00ff88; color: #00ff88; border-radius: 5px; cursor: pointer; font-family: 'Courier New', monospace;">
+                            🔄 Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayStats() {
+            const statsHtml = `
+                <div class="stat-box">
+                    <div class="stat-number">${allApis.length}</div>
+                    <div class="stat-label">Total APIs</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">${allTags.size}</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+            `;
+            document.getElementById('stats').innerHTML = statsHtml;
+        }
+
+        function displayFilterButtons() {
+            const filterButtonsContainer = document.getElementById('filterButtons');
+            const buttons = Array.from(allTags).sort().map(tag => 
+                `<button class="filter-btn" onclick="toggleFilter('${tag}')">${tag}</button>`
+            ).join('');
+            filterButtonsContainer.innerHTML = buttons;
+        }
+
+        function toggleFilter(tag) {
+            if (activeFilters.has(tag)) {
+                activeFilters.delete(tag);
+            } else {
+                activeFilters.add(tag);
+            }
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.textContent === tag) {
+                    btn.classList.toggle('active');
+                }
+            });
+            
+            filterAndDisplayApis();
+        }
+
+        function filterAndDisplayApis() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = allApis;
+            
+            // Apply tag filters
+            if (activeFilters.size > 0) {
+                filtered = filtered.filter(api => 
+                    api.tags && api.tags.some(tag => activeFilters.has(tag))
+                );
+            }
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(api => {
+                    const nameMatch = api.name && api.name.toLowerCase().includes(searchTerm);
+                    const descMatch = api.description && api.description.toLowerCase().includes(searchTerm);
+                    const tagMatch = api.tags && api.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                    return nameMatch || descMatch || tagMatch;
+                });
+            }
+            
+            displayApis(filtered);
+        }
+
+        function displayApis(apis) {
+            const content = document.getElementById('content');
+            
+            if (apis.length === 0) {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 50px; font-size: 1.2em;">
+                        <p>No APIs found matching your criteria</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #66ffaa;">Try adjusting your search or filters</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const cardsHtml = apis.map(api => `
+                <div class="api-card">
+                    <div class="api-name">${escapeHtml(api.name || 'Unnamed API')}</div>
+                    <div class="api-description">${escapeHtml(api.description || 'No description available')}</div>
+                    ${api.url ? `<div class="api-url">🔗 ${escapeHtml(api.url)}</div>` : ''}
+                    ${api.endpoint ? `<div class="api-url">⚡ ${escapeHtml(api.endpoint)}</div>` : ''}
+                    ${api.type ? `<div style="color: #66ffaa; margin: 10px 0; font-size: 0.9em;">📋 Type: ${escapeHtml(api.type)}</div>` : ''}
+                    ${api.last_updated ? `<div style="color: #99ffcc; font-size: 0.85em; margin-top: 10px;">🕒 Updated: ${escapeHtml(api.last_updated)}</div>` : ''}
+                    ${api.tags && api.tags.length > 0 ? `
+                        <div class="api-tags">
+                            ${api.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            
+            content.innerHTML = `<div class="api-grid">${cardsHtml}</div>`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateLastRefreshTime() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString();
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', filterAndDisplayApis);
+        });
+
+        // Initial load
+        fetchData();
+
+        // Auto-refresh every 5 minutes
+        setInterval(fetchData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
