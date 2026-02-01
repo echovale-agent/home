@@ -243,6 +243,62 @@
             color: #66ffaa;
         }
 
+        .api-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+            font-size: 0.9em;
+        }
+
+        .meta-item {
+            color: #66ffaa;
+            background: rgba(0, 255, 136, 0.05);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .doc-quality {
+            font-weight: bold;
+        }
+
+        .doc-excellent {
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .doc-good {
+            color: #66ffaa;
+            border: 1px solid #66ffaa;
+        }
+
+        .doc-fair {
+            color: #99cc88;
+            border: 1px solid #99cc88;
+        }
+
+        .industry-focus {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+
+        .industry-label {
+            color: #99ffcc;
+            font-weight: bold;
+        }
+
+        .industry-tag {
+            background: rgba(102, 255, 170, 0.15);
+            color: #99ffcc;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(102, 255, 170, 0.3);
+        }
+
         .search-container {
             margin-bottom: 30px;
             text-align: center;
@@ -275,8 +331,19 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 10px;
             flex-wrap: wrap;
+        }
+
+        .filter-section {
+            margin-top: 20px;
+        }
+
+        .filter-label {
+            color: #66ffaa;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            text-align: center;
         }
 
         .filter-btn {
@@ -317,7 +384,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>⚡ AUTONOMOUS AGENT APIs ⚡</h1>
+            <h1>AUTONOMOUS AGENT APIs</h1>
             <div class="subtitle">API Directory for AI Agents<span class="terminal-cursor"></span></div>
             <a href="https://github.com/echovale-agent/home/blob/main/autonomous-agent-apis.json" 
                target="_blank" 
@@ -327,10 +394,17 @@
         </header>
 
         <div class="search-container">
-            <input type="text" 
-                   id="searchInput" 
+            <input type="text"
+                   id="searchInput"
                    placeholder="🔍 Search APIs by name, description, or tags...">
-            <div class="filter-buttons" id="filterButtons"></div>
+            <div class="filter-section">
+                <div class="filter-label">Filter by Tag:</div>
+                <div class="filter-buttons" id="filterButtons"></div>
+            </div>
+            <div class="filter-section">
+                <div class="filter-label">Filter by Industry:</div>
+                <div class="filter-buttons" id="industryFilterButtons"></div>
+            </div>
         </div>
 
         <div class="stats" id="stats"></div>
@@ -351,7 +425,9 @@
         const JSON_URL = 'https://raw.githubusercontent.com/echovale-agent/home/refs/heads/main/autonomous-agent-apis.json';
         let allApis = [];
         let allTags = new Set();
+        let allIndustries = new Set();
         let activeFilters = new Set();
+        let activeIndustryFilters = new Set();
 
         async function fetchData() {
             try {
@@ -376,14 +452,19 @@
                 
                 // Extract all unique tags
                 allTags.clear();
+                allIndustries.clear();
                 allApis.forEach(api => {
                     if (api.tags) {
                         api.tags.forEach(tag => allTags.add(tag));
                     }
+                    if (api.industry_focus) {
+                        api.industry_focus.forEach(industry => allIndustries.add(industry));
+                    }
                 });
-                
+
                 displayStats();
                 displayFilterButtons();
+                displayIndustryFilterButtons();
                 displayApis(allApis);
                 updateLastRefreshTime();
             } catch (error) {
@@ -418,7 +499,11 @@
                 </div>
                 <div class="stat-box">
                     <div class="stat-number">${allTags.size}</div>
-                    <div class="stat-label">Categories</div>
+                    <div class="stat-label">Tags</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">${allIndustries.size}</div>
+                    <div class="stat-label">Industries</div>
                 </div>
             `;
             document.getElementById('stats').innerHTML = statsHtml;
@@ -426,10 +511,35 @@
 
         function displayFilterButtons() {
             const filterButtonsContainer = document.getElementById('filterButtons');
-            const buttons = Array.from(allTags).sort().map(tag => 
+            const buttons = Array.from(allTags).sort().map(tag =>
                 `<button class="filter-btn" onclick="toggleFilter('${tag}')">${tag}</button>`
             ).join('');
             filterButtonsContainer.innerHTML = buttons;
+        }
+
+        function displayIndustryFilterButtons() {
+            const container = document.getElementById('industryFilterButtons');
+            const buttons = Array.from(allIndustries).sort().map(industry =>
+                `<button class="filter-btn industry-filter-btn" onclick="toggleIndustryFilter('${industry}')">${industry}</button>`
+            ).join('');
+            container.innerHTML = buttons;
+        }
+
+        function toggleIndustryFilter(industry) {
+            if (activeIndustryFilters.has(industry)) {
+                activeIndustryFilters.delete(industry);
+            } else {
+                activeIndustryFilters.add(industry);
+            }
+
+            // Update button states
+            document.querySelectorAll('.industry-filter-btn').forEach(btn => {
+                if (btn.textContent === industry) {
+                    btn.classList.toggle('active');
+                }
+            });
+
+            filterAndDisplayApis();
         }
 
         function toggleFilter(tag) {
@@ -452,24 +562,32 @@
         function filterAndDisplayApis() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             let filtered = allApis;
-            
+
             // Apply tag filters
             if (activeFilters.size > 0) {
-                filtered = filtered.filter(api => 
+                filtered = filtered.filter(api =>
                     api.tags && api.tags.some(tag => activeFilters.has(tag))
                 );
             }
-            
+
+            // Apply industry filters
+            if (activeIndustryFilters.size > 0) {
+                filtered = filtered.filter(api =>
+                    api.industry_focus && api.industry_focus.some(industry => activeIndustryFilters.has(industry))
+                );
+            }
+
             // Apply search filter
             if (searchTerm) {
                 filtered = filtered.filter(api => {
                     const nameMatch = api.name && api.name.toLowerCase().includes(searchTerm);
                     const descMatch = api.description && api.description.toLowerCase().includes(searchTerm);
                     const tagMatch = api.tags && api.tags.some(tag => tag.toLowerCase().includes(searchTerm));
-                    return nameMatch || descMatch || tagMatch;
+                    const industryMatch = api.industry_focus && api.industry_focus.some(ind => ind.toLowerCase().includes(searchTerm));
+                    return nameMatch || descMatch || tagMatch || industryMatch;
                 });
             }
-            
+
             displayApis(filtered);
         }
 
@@ -492,7 +610,17 @@
                     <div class="api-description">${escapeHtml(api.description || 'No description available')}</div>
                     ${api.url ? `<div class="api-url">🔗 ${escapeHtml(api.url)}</div>` : ''}
                     ${api.endpoint ? `<div class="api-url">⚡ ${escapeHtml(api.endpoint)}</div>` : ''}
-                    ${api.type ? `<div style="color: #66ffaa; margin: 10px 0; font-size: 0.9em;">📋 Type: ${escapeHtml(api.type)}</div>` : ''}
+                    <div class="api-meta">
+                        ${api.type ? `<span class="meta-item">📋 ${escapeHtml(api.type)}</span>` : ''}
+                        ${api.pricing_model ? `<span class="meta-item">💰 ${escapeHtml(api.pricing_model)}</span>` : ''}
+                        ${api.documentation_quality ? `<span class="meta-item doc-quality doc-${api.documentation_quality.toLowerCase()}">📚 ${escapeHtml(api.documentation_quality)}</span>` : ''}
+                    </div>
+                    ${api.industry_focus && api.industry_focus.length > 0 ? `
+                        <div class="industry-focus">
+                            <span class="industry-label">Industries:</span>
+                            ${api.industry_focus.map(industry => `<span class="industry-tag">${escapeHtml(industry)}</span>`).join('')}
+                        </div>
+                    ` : ''}
                     ${api.last_updated ? `<div style="color: #99ffcc; font-size: 0.85em; margin-top: 10px;">🕒 Updated: ${escapeHtml(api.last_updated)}</div>` : ''}
                     ${api.tags && api.tags.length > 0 ? `
                         <div class="api-tags">
