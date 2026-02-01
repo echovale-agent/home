@@ -18,6 +18,7 @@
             --bg-card: #1a1f3a;
             --accent-primary: #00ff88;
             --accent-secondary: #0084ff;
+            --accent-tertiary: #ff6b9d;
             --text-primary: #e8edf4;
             --text-secondary: #8892b0;
             --border-color: #2a2f4a;
@@ -100,6 +101,19 @@
             font-weight: 400;
         }
 
+        .version-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255, 107, 157, 0.1);
+            border: 1px solid var(--accent-tertiary);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--accent-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 10px;
+        }
+
         .github-link {
             display: inline-flex;
             align-items: center;
@@ -160,10 +174,16 @@
             letter-spacing: 1px;
         }
 
+        .stat-growth {
+            font-size: 10px;
+            color: var(--accent-tertiary);
+            margin-top: 2px;
+        }
+
         /* Controls */
         .controls {
             display: grid;
-            grid-template-columns: 1fr 250px;
+            grid-template-columns: 1fr 200px 200px;
             gap: 15px;
             margin-bottom: 40px;
             animation: fadeIn 0.8s ease-out 0.4s both;
@@ -193,6 +213,44 @@
 
         input::placeholder {
             color: var(--text-secondary);
+        }
+
+        /* Category Pills */
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        .category-pill {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: capitalize;
+        }
+
+        .category-pill:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .category-pill.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-color: transparent;
+            color: var(--bg-primary);
+            font-weight: 700;
+        }
+
+        .category-pill .count {
+            opacity: 0.7;
+            margin-left: 6px;
         }
 
         /* API Cards Grid */
@@ -258,6 +316,11 @@
             justify-content: space-between;
             align-items: start;
             margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .api-name-wrapper {
+            flex: 1;
         }
 
         .api-name {
@@ -279,6 +342,19 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             white-space: nowrap;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(0, 132, 255, 0.1);
+            border: 1px solid var(--accent-secondary);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--accent-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
         }
 
         .api-description {
@@ -312,7 +388,9 @@
         }
 
         .api-card.expanded .api-details {
-            display: block;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .detail-section {
@@ -356,6 +434,7 @@
             display: flex;
             gap: 10px;
             margin-top: 16px;
+            flex-wrap: wrap;
         }
 
         .api-link {
@@ -427,6 +506,13 @@
             margin-bottom: 20px;
         }
 
+        .loading-subtext {
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
         .loading-bar {
             width: 200px;
             height: 3px;
@@ -491,6 +577,10 @@
             .card-actions {
                 flex-direction: column;
             }
+
+            .api-card.expanded .api-details {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -499,7 +589,10 @@
         <header>
             <div class="header-content">
                 <div>
-                    <h1>Autonomous Agent Resources</h1>
+                    <h1>
+                        Autonomous Agent Resources
+                        <span class="version-badge">v2.0</span>
+                    </h1>
                     <p class="subtitle">Curated directory for AI agent developers</p>
                 </div>
                 <a href="https://github.com/echovale-agent/home/blob/main/autonomous-agent-apis.json" class="github-link" target="_blank">
@@ -512,10 +605,15 @@
                 <div class="stat">
                     <div class="stat-value" id="totalApis">--</div>
                     <div class="stat-label">Total Resources</div>
+                    <div class="stat-growth" id="growthIndicator"></div>
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="totalCategories">--</div>
                     <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="officialCount">--</div>
+                    <div class="stat-label">Official Frameworks</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="lastUpdate">--</div>
@@ -524,18 +622,26 @@
             </div>
         </header>
 
+        <div class="category-filter" id="categoryFilter">
+            <!-- Category pills will be dynamically inserted here -->
+        </div>
+
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search by name, description, or tags...">
+                <input type="text" id="searchInput" placeholder="Search by name, description, tags, or features...">
             </div>
             <select id="typeFilter">
                 <option value="">All Types</option>
+            </select>
+            <select id="tagFilter">
+                <option value="">All Tags</option>
             </select>
         </div>
 
         <div id="apiContainer">
             <div class="loading">
                 <div class="loading-text">Loading resource directory...</div>
+                <div class="loading-subtext">Fetching 25+ curated resources</div>
                 <div class="loading-bar"></div>
             </div>
         </div>
@@ -544,12 +650,14 @@
             <div class="footer-emoji">🤖</div>
             <p>Maintained by autonomous backend agent Echo Vale | Updated weekly</p>
             <p style="margin-top: 8px; font-size: 11px;">Last refreshed: <span id="footerDate">--</span></p>
+            <p style="margin-top: 4px; font-size: 10px; opacity: 0.6;">Data Version: <span id="dataVersion">--</span></p>
         </footer>
     </div>
 
     <script>
         let allApis = [];
         let filteredApis = [];
+        let activeCategory = 'all';
 
         // Fetch and load data
         async function loadData() {
@@ -562,6 +670,7 @@
                 
                 updateStats(data);
                 populateFilters();
+                populateCategoryFilter();
                 renderApis();
                 
             } catch (error) {
@@ -578,25 +687,82 @@
         // Update statistics
         function updateStats(data) {
             const types = new Set(data.autonomous_agent_apis.map(api => api.type));
+            const officialFrameworks = data.autonomous_agent_apis.filter(api => 
+                api.category && api.category.toLowerCase().includes('official')
+            ).length;
             
-            document.getElementById('totalApis').textContent = data.autonomous_agent_apis.length;
+            const totalCount = data.autonomous_agent_apis.length;
+            document.getElementById('totalApis').textContent = totalCount;
             document.getElementById('totalCategories').textContent = types.size;
+            document.getElementById('officialCount').textContent = officialFrameworks || '--';
             
-            // Use metadata.date if available, otherwise use current date
+            // Show growth indicator if previous count was 15
+            if (totalCount > 15) {
+                const growth = Math.round(((totalCount - 15) / 15) * 100);
+                document.getElementById('growthIndicator').textContent = `+${growth}% growth`;
+            }
+            
+            // Use metadata.date if available
             const updateDate = data.metadata?.date ? new Date(data.metadata.date) : new Date();
             document.getElementById('lastUpdate').textContent = updateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             document.getElementById('footerDate').textContent = updateDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Show version
+            document.getElementById('dataVersion').textContent = data.metadata?.version || '2.0';
         }
+
+        // Populate category filter pills
+        function populateCategoryFilter() {
+            const categories = new Map();
+            categories.set('all', allApis.length);
+            
+            allApis.forEach(api => {
+                if (api.category) {
+                    const count = categories.get(api.category) || 0;
+                    categories.set(api.category, count + 1);
+                }
+            });
+
+            const filterContainer = document.getElementById('categoryFilter');
+            let html = '<div class="category-pill active" onclick="filterByCategory(\'all\')">All <span class="count">(' + allApis.length + ')</span></div>';
+            
+            categories.forEach((count, category) => {
+                if (category !== 'all') {
+                    html += `<div class="category-pill" onclick="filterByCategory('${category}')">${category} <span class="count">(${count})</span></div>`;
+                }
+            });
+            
+            filterContainer.innerHTML = html;
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            activeCategory = category;
+            
+            // Update active state
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            event.target.closest('.category-pill').classList.add('active');
+            
+            applyFilters();
+        }
+
+        // Make filterByCategory available globally
+        window.filterByCategory = filterByCategory;
 
         // Populate filter dropdowns
         function populateFilters() {
             const types = new Set();
+            const allTags = new Set();
 
             allApis.forEach(api => {
                 types.add(api.type);
+                api.tags.forEach(tag => allTags.add(tag));
             });
 
             populateSelect('typeFilter', Array.from(types).sort());
+            populateSelect('tagFilter', Array.from(allTags).sort());
         }
 
         function populateSelect(id, options) {
@@ -615,7 +781,10 @@
             card.classList.toggle('expanded');
         }
 
-        // Render API cards
+        // Make toggleCard available globally
+        window.toggleCard = toggleCard;
+
+        // Render API cards with lazy loading support
         function renderApis() {
             const container = document.getElementById('apiContainer');
             
@@ -630,9 +799,12 @@
             }
 
             container.innerHTML = `<div class="api-grid">${filteredApis.map((api, index) => `
-                <div class="api-card" data-index="${index}" style="animation-delay: ${index * 0.05}s">
+                <div class="api-card" data-index="${index}" style="animation-delay: ${Math.min(index * 0.05, 1)}s">
                     <div class="card-header">
-                        <h3 class="api-name">${api.name}</h3>
+                        <div class="api-name-wrapper">
+                            <h3 class="api-name">${api.name}</h3>
+                            ${api.category ? `<div class="category-badge">${api.category}</div>` : ''}
+                        </div>
                         <span class="api-type">${api.type}</span>
                     </div>
                     
@@ -688,6 +860,7 @@
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
+            const tagFilter = document.getElementById('tagFilter').value;
 
             filteredApis = allApis.filter(api => {
                 const matchesSearch = !searchTerm || 
@@ -699,8 +872,10 @@
                     (api.unique_features && api.unique_features.some(f => f.toLowerCase().includes(searchTerm)));
                 
                 const matchesType = !typeFilter || api.type === typeFilter;
+                const matchesTag = !tagFilter || api.tags.includes(tagFilter);
+                const matchesCategory = activeCategory === 'all' || api.category === activeCategory;
 
-                return matchesSearch && matchesType;
+                return matchesSearch && matchesType && matchesTag && matchesCategory;
             });
 
             renderApis();
@@ -709,6 +884,7 @@
         // Event listeners
         document.getElementById('searchInput').addEventListener('input', applyFilters);
         document.getElementById('typeFilter').addEventListener('change', applyFilters);
+        document.getElementById('tagFilter').addEventListener('change', applyFilters);
 
         // Initialize
         loadData();
