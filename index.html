@@ -3,104 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Display of Autonomous Agent APIs with search and filter capabilities.">
     <title>Autonomous Agent APIs</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background: #4CAF50; color: white; padding: 1em; text-align: center; }
-        #searchBar { margin: 1em; }
-        .filter-container { margin: 1em 0; display: flex; gap: 1em; justify-content: center; }
-        .filter-container select { padding: 0.5em; }
-        .api-card { border: 1px solid #ddd; border-radius: 5px; margin: 1em; padding: 1em; transition: box-shadow 0.3s; }
-        .api-card:hover { box-shadow: 0 0 10px rgba(0,0,0,0.2); }
-        .card-container { display: flex; flex-wrap: wrap; justify-content: center; }
-        footer { text-align: center; padding: 1em; background: #f1f1f1; }
-        @media (max-width: 600px) { .filter-container { flex-direction: column; } }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .search-container {
+            margin: 10px auto;
+            display: flex;
+            justify-content: center;
+        }
+        .search-container input, .search-container select {
+            padding: 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .search-container {
+                flex-direction: column;
+            }
+            .search-container input, .search-container select {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Autonomous Agent APIs</h1>
-        <input type="text" id="searchBar" placeholder="Search APIs...">
-        <div class="filter-container">
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <select id="filterSelect">
+                <option value="">Filter by Category</option>
                 <option value="API">API</option>
                 <option value="Framework">Framework</option>
                 <option value="Platform">Platform</option>
-                <option value="Research">Research</option>
             </select>
-            <select id="pricingFilter">
-                <option value="">All Pricing</option>
-                <option value="free">Free</option>
-                <option value="paid">Paid</option>
-                <option value="freemium">Freemium</option>
-            </select>
+            <button onclick="fetchData()">Search</button>
         </div>
     </header>
-    <main id="apiContainer"></main>
+    <div id="loading" style="display: none;">Loading...</div>
+    <div id="error" style="color: red; display: none;">Failed to load data.</div>
+    <div id="cardContainer" class="card-container"></div>
     <footer>
-        <div id="stats"></div>
+        <p id="stats">Total APIs: 0</p>
     </footer>
+
     <script>
-        const apiData = [
-            {"name": "OpenAI Agents", "url": "https://platform.openai.com/docs/guides/agents", "description": "OpenAI provides models with agentic strengths, a toolkit for agent creation, and dashboard features for monitoring and optimizing agents.", "category": "API", "pricing": "freemium"},
-            {"name": "LangChain", "url": "https://python.langchain.com/docs/introduction", "description": "LangChain is a framework for developing applications powered by language models, enabling the creation of text generation and comprehension applications.", "category": "Framework", "pricing": "free"},
-            {"name": "CrewAI", "url": "https://docs.crewai.com", "description": "CrewAI provides a platform for building and deploying intelligent agents that can collaborate and manage tasks autonomously.", "category": "Platform", "pricing": "paid"},
-            {"name": "AutoGen", "url": "https://microsoft.github.io/autogen", "description": "AutoGen is a framework developed by Microsoft to facilitate the automatic generation of code and agents, streamlining the development process.", "category": "Framework", "pricing": "free"},
-            {"name": "Semantic Kernel", "url": "https://learn.microsoft.com/semantic-kernel", "description": "Semantic Kernel is a framework for integrating AI with conventional programming, allowing the creation of sophisticated applications with minimal code.", "category": "Framework", "pricing": "free"},
-            {"name": "LlamaIndex", "url": "https://docs.llamaindex.ai", "description": "LlamaIndex provides tools for building AI applications with a focus on data indexing and retrieval, enhancing the efficiency of AI models.", "category": "Framework", "pricing": "free"},
-            {"name": "SuperAGI", "url": "https://superagi.com", "description": "SuperAGI is a platform designed for the rapid development and deployment of autonomous agents, focusing on scalability and ease of use.", "category": "Platform", "pricing": "paid"},
-            {"name": "RASA", "url": "https://rasa.com/docs", "description": "RASA is an open-source framework for building conversational AI, enabling the creation of chatbots and virtual assistants with natural language processing.", "category": "Framework", "pricing": "free"},
-            {"name": "AgentFlow", "url": "https://agentflow.com/docs", "description": "AgentFlow is a comprehensive framework for developing AI agents that can handle complex workflows and automated processes.", "category": "Framework", "pricing": "paid"},
-            {"name": "Anthropic", "url": "https://www.anthropic.com/research/building-effective-agents", "description": "Anthropic focuses on building effective AI agents with a strong emphasis on ethical AI development and safety measures.", "category": "Research", "pricing": "free"},
-            {"name": "IBM Watson", "url": "https://cloud.ibm.com/docs/watson", "description": "IBM Watson provides AI tools and services for building intelligent applications, including chatbots and autonomous agents.", "category": "Platform", "pricing": "paid"},
-            {"name": "Botpress", "url": "https://botpress.com/docs", "description": "Botpress is an open-source platform for building and managing chatbots with advanced capabilities for natural language understanding.", "category": "Framework", "pricing": "free"},
-            {"name": "Dialogflow", "url": "https://cloud.google.com/dialogflow/docs", "description": "Dialogflow is a Google service for building conversational interfaces, allowing developers to create chatbots and voice assistants.", "category": "API", "pricing": "freemium"},
-            {"name": "Microsoft Bot Framework", "url": "https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction", "description": "Microsoft Bot Framework provides tools for building AI-powered chatbots that can integrate with various channels and services.", "category": "Framework", "pricing": "free"},
-            {"name": "Hugging Face Transformers", "url": "https://huggingface.co/docs/transformers", "description": "Hugging Face provides a library for building and deploying transformers for various NLP tasks, facilitating the creation of intelligent agents.", "category": "Framework", "pricing": "free"}
-        ];
+        async function fetchData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            try {
+                const response = await fetch('autonomous-agent-apis.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                displayData(data);
+            } catch (error) {
+                document.getElementById('error').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
 
-        function displayAPIs(filteredAPIs) {
-            const apiContainer = document.getElementById('apiContainer');
-            apiContainer.innerHTML = '';
-            filteredAPIs.forEach(api => {
+        function displayData(data) {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const filterSelect = document.getElementById('filterSelect').value;
+            const filteredData = data.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchInput);
+                const matchesFilter = filterSelect ? item.category === filterSelect : true;
+                return matchesSearch && matchesFilter;
+            });
+
+            const cardContainer = document.getElementById('cardContainer');
+            cardContainer.innerHTML = ''; // Clear previous cards
+            filteredData.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'api-card';
-                card.innerHTML = `<h2>${api.name}</h2><p>${api.description}</p><p><strong>Category:</strong> ${api.category}</p><p><strong>Pricing:</strong> ${api.pricing}</p><a href='${api.url}' target='_blank'>Learn More</a>`;
-                apiContainer.appendChild(card);
+                card.className = 'card';
+                card.innerHTML = `<h2>${item.name}</h2><p>${item.description}</p><p>Category: ${item.category}</p><p>Pricing: ${item.pricing}</p><a href="${item.url}" target="_blank">Learn more</a>`;
+                cardContainer.appendChild(card);
             });
-            updateStats(filteredAPIs);
+            document.getElementById('stats').innerText = `Total APIs: ${filteredData.length}`;
         }
 
-        function updateStats(filteredAPIs) {
-            const stats = document.getElementById('stats');
-            const totalCount = filteredAPIs.length;
-            const categories = filteredAPIs.reduce((acc, api) => {
-                acc[api.category] = (acc[api.category] || 0) + 1;
-                return acc;
-            }, {});
-            stats.innerHTML = `<p>Total APIs: ${totalCount}</p><p>Categories: ${JSON.stringify(categories)}</p>`;
-        }
-
-        function filterAPIs() {
-            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const pricingFilter = document.getElementById('pricingFilter').value;
-            const filteredAPIs = apiData.filter(api => {
-                const matchesSearch = api.name.toLowerCase().includes(searchQuery) || api.description.toLowerCase().includes(searchQuery);
-                const matchesCategory = categoryFilter ? api.category === categoryFilter : true;
-                const matchesPricing = pricingFilter ? api.pricing === pricingFilter : true;
-                return matchesSearch && matchesCategory && matchesPricing;
-            });
-            displayAPIs(filteredAPIs);
-        }
-
-        document.getElementById('searchBar').addEventListener('input', filterAPIs);
-        document.getElementById('categoryFilter').addEventListener('change', filterAPIs);
-        document.getElementById('pricingFilter').addEventListener('change', filterAPIs);
-
-        window.onload = () => displayAPIs(apiData);
+        window.onload = fetchData;
     </script>
 </body>
 </html>
