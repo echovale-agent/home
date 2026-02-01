@@ -212,6 +212,7 @@
             animation: scaleIn 0.5s ease-out both;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .api-card::before {
@@ -246,6 +247,10 @@
             transform: translateY(-4px);
             border-color: var(--accent-primary);
             box-shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
+        }
+
+        .api-card.expanded {
+            grid-column: 1 / -1;
         }
 
         .card-header {
@@ -298,6 +303,61 @@
             color: var(--text-secondary);
         }
 
+        /* Expandable Details */
+        .api-details {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .api-card.expanded .api-details {
+            display: block;
+        }
+
+        .detail-section {
+            margin-bottom: 16px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .detail-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .unique-features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .unique-features-list li {
+            padding-left: 16px;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .unique-features-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
         .api-link {
             display: inline-flex;
             align-items: center;
@@ -315,6 +375,38 @@
         .api-link:hover {
             transform: translateX(4px);
             box-shadow: 0 4px 16px rgba(0, 255, 136, 0.3);
+        }
+
+        .expand-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .expand-btn:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .api-card.expanded .expand-btn .expand-text {
+            display: none;
+        }
+
+        .api-card.expanded .expand-btn .collapse-text {
+            display: inline;
+        }
+
+        .expand-btn .collapse-text {
+            display: none;
         }
 
         /* Loading State */
@@ -395,6 +487,10 @@
             .stat-value {
                 font-size: 24px;
             }
+
+            .card-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -415,7 +511,7 @@
             <div class="stats-bar">
                 <div class="stat">
                     <div class="stat-value" id="totalApis">--</div>
-                    <div class="stat-label">Total APIs</div>
+                    <div class="stat-label">Total Resources</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="totalCategories">--</div>
@@ -430,7 +526,7 @@
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search APIs by name, description, or tags...">
+                <input type="text" id="searchInput" placeholder="Search by name, description, or tags...">
             </div>
             <select id="typeFilter">
                 <option value="">All Types</option>
@@ -439,7 +535,7 @@
 
         <div id="apiContainer">
             <div class="loading">
-                <div class="loading-text">Loading API directory...</div>
+                <div class="loading-text">Loading resource directory...</div>
                 <div class="loading-bar"></div>
             </div>
         </div>
@@ -472,7 +568,7 @@
                 console.error('Error loading data:', error);
                 document.getElementById('apiContainer').innerHTML = `
                     <div class="no-results">
-                        <p>⚠️ Failed to load API data</p>
+                        <p>⚠️ Failed to load resource data</p>
                         <p style="margin-top: 10px; font-size: 12px;">Please try refreshing the page</p>
                     </div>
                 `;
@@ -495,11 +591,9 @@
         // Populate filter dropdowns
         function populateFilters() {
             const types = new Set();
-            const allTags = new Set();
 
             allApis.forEach(api => {
                 types.add(api.type);
-                api.tags.forEach(tag => allTags.add(tag));
             });
 
             populateSelect('typeFilter', Array.from(types).sort());
@@ -515,6 +609,12 @@
             });
         }
 
+        // Toggle card expansion
+        function toggleCard(index) {
+            const card = document.querySelector(`[data-index="${index}"]`);
+            card.classList.toggle('expanded');
+        }
+
         // Render API cards
         function renderApis() {
             const container = document.getElementById('apiContainer');
@@ -522,7 +622,7 @@
             if (filteredApis.length === 0) {
                 container.innerHTML = `
                     <div class="no-results">
-                        <p>No APIs found matching your filters</p>
+                        <p>No resources found matching your filters</p>
                         <p style="margin-top: 10px; font-size: 12px;">Try adjusting your search criteria</p>
                     </div>
                 `;
@@ -530,7 +630,7 @@
             }
 
             container.innerHTML = `<div class="api-grid">${filteredApis.map((api, index) => `
-                <div class="api-card" style="animation-delay: ${index * 0.05}s">
+                <div class="api-card" data-index="${index}" style="animation-delay: ${index * 0.05}s">
                     <div class="card-header">
                         <h3 class="api-name">${api.name}</h3>
                         <span class="api-type">${api.type}</span>
@@ -542,9 +642,44 @@
                         ${api.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                     </div>
                     
-                    <a href="${api.url}" target="_blank" class="api-link">
-                        View Documentation →
-                    </a>
+                    ${api.curation_reason || api.adoption_indicators || api.unique_features ? `
+                    <div class="api-details">
+                        ${api.curation_reason ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Why This Resource?</div>
+                            <div class="detail-content">${api.curation_reason}</div>
+                        </div>
+                        ` : ''}
+                        
+                        ${api.adoption_indicators ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Adoption Indicators</div>
+                            <div class="detail-content">${api.adoption_indicators}</div>
+                        </div>
+                        ` : ''}
+                        
+                        ${api.unique_features && api.unique_features.length > 0 ? `
+                        <div class="detail-section">
+                            <div class="detail-label">Unique Features</div>
+                            <ul class="unique-features-list">
+                                ${api.unique_features.map(feature => `<li>${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="card-actions">
+                        <a href="${api.url}" target="_blank" class="api-link" onclick="event.stopPropagation()">
+                            View Documentation →
+                        </a>
+                        ${api.curation_reason || api.adoption_indicators || api.unique_features ? `
+                        <button class="expand-btn" onclick="toggleCard(${index}); event.stopPropagation()">
+                            <span class="expand-text">More Info</span>
+                            <span class="collapse-text">Less Info</span>
+                        </button>
+                        ` : ''}
+                    </div>
                 </div>
             `).join('')}</div>`;
         }
@@ -558,7 +693,10 @@
                 const matchesSearch = !searchTerm || 
                     api.name.toLowerCase().includes(searchTerm) ||
                     api.description.toLowerCase().includes(searchTerm) ||
-                    api.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                    api.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                    (api.curation_reason && api.curation_reason.toLowerCase().includes(searchTerm)) ||
+                    (api.adoption_indicators && api.adoption_indicators.toLowerCase().includes(searchTerm)) ||
+                    (api.unique_features && api.unique_features.some(f => f.toLowerCase().includes(searchTerm)));
                 
                 const matchesType = !typeFilter || api.type === typeFilter;
 
