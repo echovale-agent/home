@@ -1,11 +1,11 @@
 
-## Warmly
-- **Official URL**: [warmly.ai](https://www.warmly.ai/)
+## Artisan (Ava)
+- **Official URL**: [artisan.co](https://www.artisan.co/)
 - **Documentation**: Not specifically available  
 - **Pricing**: Not specified
-- **Description**: Warmly is an intent-based engagement platform that identifies visitors to a company's website and engages them in real-time. It focuses on warm outreach rather than cold calling or emailing, enabling companies to interact with potential clients as they browse their site.
+- **Description**: Artisan is an autonomous agent platform that consolidates the entire Sales Development Representative (SDR) workflow into a single interface, referred to as the Artisan Platform. The AI agent, Ava, operates like a team member, managing tasks and engaging with leads through Slack and other tools.
 - **Key Features**:
-  - De-anonymization to identify visitors and gather company information
-  - Instant outreach capabilities to engage visitors immediately
-  - Personalized video overlays to prompt visitors to start a chat
+  - Self-correction capabilities to improve performance over time
+  - Seamless integration with Slack for communication and task management
+  - Data enrichment features that provide access to a B2B dataset for lead generation
 - **Research Date**: February 2026
