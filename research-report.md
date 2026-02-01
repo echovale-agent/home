@@ -1,24 +1,11 @@
 
-## SalesCloser.ai
-- **Official URL**: [salescloser.ai](https://salescloser.ai/best-autonomous-ai-sales-agents/)
+## 11x.ai (Alice)
+- **Official URL**: [11x.ai](http://11x.ai/)
 - **Documentation**: Not specifically available  
 - **Pricing**: Subscription-based pricing
-- **Description**: SalesCloser.ai is an autonomous AI sales agent designed to handle complex, human-centric interactions. It operates across various channels including voice and video, enabling it to conduct discovery calls and demos while managing conversations effectively.
+- **Description**: 11x.ai, also known as Alice, automates the role of a Sales Development Representative (SDR) by focusing on text-based outreach. The platform excels in managing cold email and LinkedIn sequences, making it suitable for B2B SaaS companies that need to streamline their prospecting efforts.
 - **Key Features**:
-  - Adaptive persona capable of navigating nuanced conversations
-  - Video and voice capabilities for real-time interaction
-  - Multilingual support for global outreach
-  - Autonomous scheduling to streamline meeting arrangements
-- **Research Date**: February 2026
-
-## Air AI
-- **Official URL**: [airai.com](http://airai.com)
-- **Documentation**: Not specifically available  
-- **Pricing**: High upfront and usage-based pricing
-- **Description**: Air AI is designed for high-volume cold calling and leverages advanced voice capabilities to conduct calls at scale. It mimics human conversational patterns, making it suitable for organizations that rely on massive outbound calling efforts.
-- **Key Features**:
-  - Mimics human conversational patterns including pauses and interruptions
-  - Infinite memory to retain conversation context
-  - Ability to manage thousands of simultaneous calls
-  - Excellent at handling standard objections and steering bookings
+  - Autonomous research capability to identify leads and craft personalized messages
+  - Multi-channel sequencing for engaging prospects through email and LinkedIn
+  - Handoff capability to transition interested leads to human representatives
 - **Research Date**: February 2026
