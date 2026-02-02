@@ -1,56 +1,54 @@
-
-## Vellum AI
-- **Official URL**: [vellum.ai](https://vellum.ai/)
-- **Documentation**: [Vellum Documentation](https://www.vellum.ai/docs)
-- **Pricing**: Free tier; paid plans starting at $25 per month; enterprise plans available
-- **Description**: Vellum AI is the easiest way to build reliable AI agents. It is designed for teams who want to automate boring operational work by simply describing the task they want done. There is no code to write, no complex workflow wiring to manage, and no AI expertise required.
-- **Key Features**:
-  - Prompt-based agent creation
-  - Visual builder with TypeScript/Python SDK
-  - Shareable AI Apps for cross-org reuse
-  - Flexible deployment options (cloud, VPC, on-prem)
-- **Research Date**: February 2026
-
-## Retool AI
-- **Official URL**: [retool.com](https://retool.com/)
-- **Documentation**: [Retool Documentation](https://docs.retool.com/)
-- **Pricing**: Free tier available; paid plans starting at $10/month; enterprise plans available
-- **Description**: Retool AI allows developers to drag and drop AI blocks into internal dashboards, making it easy to add summarization or generation to admin panels.
-- **Key Features**:
-  - AI blocks in dashboards
-  - Strong vector database connectivity
-  - Developer-friendly environment
-- **Research Date**: February 2026
-
-## Microsoft Copilot Studio
-- **Official URL**: [microsoft.com](https://www.microsoft.com/en-us/microsoft-365-copilot/microsoft-copilot-studio)
-- **Documentation**: [Microsoft Documentation](https://docs.microsoft.com/en-us/microsoft-365/collaborate/microsoft-copilot?view=o365-worldwide)
-- **Pricing**: From $30/user/month; pay-as-you-go pricing available
-- **Description**: Microsoft Copilot Studio is integrated into the Microsoft 365 ecosystem, allowing organizations to build agents that operate within Teams and SharePoint.
-- **Key Features**:
-  - Native access to Microsoft Graph
-  - Enterprise-grade security and compliance controls
-  - Deploys directly to Microsoft Teams
-- **Research Date**: February 2026
-
 ## Salesforce Agentforce
 - **Official URL**: [salesforce.com](https://www.salesforce.com/agentforce/)
 - **Documentation**: [Salesforce Documentation](https://help.salesforce.com/s/articleView?id=sf.agentforce_overview.htm&type=5)
 - **Pricing**: Free trial; Starting at $500 per 100K credits
-- **Description**: Formerly Einstein Copilot, Agentforce is Salesforce's native builder, designed to act on CRM data and automate customer communications.
+- **Description**: Salesforce Agentforce is a native builder for automating customer communications and operational workflows. It integrates deeply with Salesforce CRM, allowing for advanced automation and customer engagement.
 - **Key Features**:
   - Deep integration with Salesforce CRM
-  - Permission-aware actions
-  - Trusted for handling sensitive data
+  - Ability to handle complex, multi-agent workflows
+  - Built-in AI capabilities for predictive customer engagement
 - **Research Date**: February 2026
 
-## Clay
-- **Official URL**: [clay.com](https://www.clay.com/)
-- **Documentation**: [Clay Documentation](https://www.clay.com/docs)
-- **Pricing**: Free tier; enterprise plans available
-- **Description**: Clay is a data enrichment platform that uses AI agents to find information from the web, primarily for sales teams to enrich lead lists.
+## Kore.ai
+- **Official URL**: [kore.ai](https://www.kore.ai/)
+- **Documentation**: [Kore.ai Documentation](https://www.kore.ai/docs)
+- **Pricing**: Flexible pricing options including session-based, usage-based, and per-seat models
+- **Description**: Kore.ai offers a comprehensive agentic AI platform designed for enterprises to build, deploy, and scale AI agents across various business functions. It provides multi-agent orchestration and strong governance features.
 - **Key Features**:
-  - Best-in-class for email and company data discovery
-  - Effective web scraper agent
-  - Familiar spreadsheet-like interface
+  - Multi-agent orchestration
+  - Enterprise-grade governance and observability
+  - Extensive integration capabilities
+- **Research Date**: February 2026
+
+## Fujitsu AI Platform
+- **Official URL**: [fujitsu.com](https://global.fujitsu/en-global/pr/news/2026/01/26-02)
+- **Documentation**: [Fujitsu Documentation](https://global.fujitsu/en-global/pr/news/2026/01/26-02)
+- **Pricing**: Unknown (details to be provided during trial registration)
+- **Description**: Fujitsu's new AI platform enables autonomous operation of generative AI optimized for in-house applications. It focuses on secure and efficient AI model management and generative AI lifecycle operations.
+- **Key Features**:
+  - Dedicated environment for secure AI use
+  - Generative AI trust technologies for vulnerability management
+  - Low-code/no-code AI agent development capabilities
+- **Research Date**: February 2026
+
+## Glean
+- **Official URL**: [glean.com](https://www.glean.com/)
+- **Documentation**: [Glean Documentation](https://www.glean.com/docs)
+- **Pricing**: Free trial available; paid plans vary based on usage
+- **Description**: Glean provides a unified enterprise search experience that integrates knowledge across various business applications, improving information discovery and employee efficiency.
+- **Key Features**:
+  - Contextual search with role-aware recommendations
+  - Natural-language question answering
+  - AI Assistant for insights
+- **Research Date**: February 2026
+
+## Sierra
+- **Official URL**: [sierra.com](https://www.sierra.com/)
+- **Documentation**: [Sierra Documentation](https://www.sierra.com/docs)
+- **Pricing**: Outcome-based pricing model
+- **Description**: Sierra is focused on delivering autonomous customer service agents capable of handling various transactional interactions, such as refunds and account updates across multiple channels.
+- **Key Features**:
+  - Goal-oriented agents for specific business outcomes
+  - Personalization through long-term customer context
+  - Brand-level customization for agent behavior
 - **Research Date**: February 2026
