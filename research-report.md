@@ -1,57 +1,57 @@
 
 
-## Lindy
-- **Official URL**: [lindy.ai](https://www.lindy.ai/)
-- **Documentation**: [Lindy Documentation](https://www.lindy.ai/docs)
-- **Pricing**: Free plan; Starting at $49.99/month
-- **Description**: Lindy is an AI automation platform designed to handle complex workflows and automate tasks across various applications. It allows users to build custom AI agents, called Lindies, that can manage customer interactions, internal processes, and more.
+## FlowHunt
+- **Official URL**: [flowhunt.io](https://www.flowhunt.io/)
+- **Documentation**: [FlowHunt Documentation](https://www.flowhunt.io/docs)
+- **Pricing**: Free tier available; Pro plans starting at $29/month with usage-based scaling for enterprise deployments.
+- **Description**: FlowHunt is a no-code AI agent building platform that allows organizations to create, deploy, and manage agents seamlessly across various applications. Its visual workflow builder enables rapid prototyping and deployment.
 - **Key Features**:
-  - No-code builder for multi-step automations
-  - Voice agents for inbound/outbound calling
-  - Deep integrations with over 2,500 applications
-  - Custom conditions and workflows
+  - Drag-and-drop interface for building agents
+  - Multi-model support including integration with GPT-4 and others
+  - Omnichannel deployment capabilities
+  - Comprehensive analytics for monitoring agent performance
 - **Research Date**: February 2026
 
-## Perplexity
-- **Official URL**: [perplexity.ai](https://www.perplexity.ai/)
-- **Documentation**: [Perplexity Documentation](https://www.perplexity.ai/docs)
-- **Pricing**: Free plan available; Pro plan at $20/month
-- **Description**: Perplexity is an AI-powered answer engine that provides real-time, sourced answers to user queries. It excels in research tasks and offers a streamlined interface for finding information quickly.
+## Relevance AI
+- **Official URL**: [relevance.ai](https://www.relevance.ai/)
+- **Documentation**: [Relevance AI Documentation](https://www.relevance.ai/docs)
+- **Pricing**: Usage-based pricing model.
+- **Description**: Relevance AI offers a no-code platform for building AI agents focused on rapid development and deployment, featuring extensive integrations with business applications.
 - **Key Features**:
-  - Real-time web results with citations
-  - Follow-up Q&A with persistent context
-  - Supports file uploads for context-aware queries
+  - Intuitive visual workflow builder
+  - Role-aware recommendations and natural-language question answering
+  - Contextual search capabilities
 - **Research Date**: February 2026
 
-## Jasper
-- **Official URL**: [jasper.ai](https://www.jasper.ai/)
-- **Documentation**: [Jasper Documentation](https://www.jasper.ai/docs)
-- **Pricing**: Free trial; Starting at $49/month for the Creator plan
-- **Description**: Jasper is an AI writing assistant designed for marketers to create content quickly and consistently. It uses advanced AI to generate marketing copy, blog posts, and more, while maintaining brand voice and tone.
+## Zapier Central
+- **Official URL**: [zapier.com](https://zapier.com/)
+- **Documentation**: [Zapier Documentation](https://zapier.com/help)
+- **Pricing**: Subscription-based pricing with various tiers.
+- **Description**: Zapier Central allows organizations to leverage its extensive integration ecosystem to create intelligent agents that automate workflows across thousands of applications.
 - **Key Features**:
-  - Brand voice customization
-  - Prebuilt templates for various content types
-  - Collaboration tools for team use
+  - Intuitive automation workflows
+  - Connects to over 7,000 applications
+  - Transition from simple automations to autonomous agents
 - **Research Date**: February 2026
 
-## Copy.ai
-- **Official URL**: [copy.ai](http://copy.ai/)
-- **Documentation**: [Copy.ai Documentation](https://www.copy.ai/docs)
-- **Pricing**: Free plan available; Pro plan at $49/month
-- **Description**: Copy.ai is an AI-powered content generator that helps users create marketing copy, product descriptions, and more. It features a simple interface and a variety of templates to streamline content creation.
+## Microsoft Copilot Studio
+- **Official URL**: [microsoft.com](https://www.microsoft.com/en-us/microsoft-365/copilot)
+- **Documentation**: [Copilot Documentation](https://docs.microsoft.com/en-us/microsoft-365/copilot)
+- **Pricing**: Subscription required; pricing varies by organization.
+- **Description**: Microsoft Copilot Studio integrates AI capabilities within the Microsoft ecosystem, allowing users to build agents that optimize productivity across Microsoft applications.
 - **Key Features**:
-  - Templates for all types of marketing content
-  - AI workflows for batch processing
-  - Integration with various platforms
+  - Contextual integration with Microsoft tools
+  - AI-driven productivity enhancements
+  - Flexible deployment across multiple platforms
 - **Research Date**: February 2026
 
-## Notion AI
-- **Official URL**: [notion.com](https://www.notion.com/help/guides/category/ai)
-- **Documentation**: [Notion AI Documentation](https://www.notion.com/help/guides)
-- **Pricing**: Limited free plan; Business plan starts at $24/user/month
-- **Description**: Notion AI enhances the Notion workspace by providing AI capabilities for writing, summarizing, and organizing content. It helps users streamline their workflows and improve productivity.
+## Google Vertex AI
+- **Official URL**: [cloud.google.com/vertex-ai](https://cloud.google.com/vertex-ai)
+- **Documentation**: [Vertex AI Documentation](https://cloud.google.com/vertex-ai/docs)
+- **Pricing**: Usage-based pricing model.
+- **Description**: Google Vertex AI is a comprehensive platform for building, training, and deploying scalable AI agents, integrated with Google Cloud services for enhanced capabilities.
 - **Key Features**:
-  - In-line AI writing and editing
-  - Task and action item generation
-  - Integration with existing Notion databases
+  - No-code and code-based agent building options
+  - Multimodal processing capabilities
+  - Robust infrastructure for production deployment
 - **Research Date**: February 2026
