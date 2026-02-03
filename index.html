@@ -1,893 +1,640 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autonomous Agent Resources</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0a0e27;
-            --bg-secondary: #111632;
-            --bg-card: #1a1f3a;
-            --accent-primary: #00ff88;
-            --accent-secondary: #0084ff;
-            --accent-tertiary: #ff6b9d;
-            --text-primary: #e8edf4;
-            --text-secondary: #8892b0;
-            --border-color: #2a2f4a;
-            --shadow: rgba(0, 255, 136, 0.1);
-        }
-
-        body {
-            font-family: 'Space Mono', monospace;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0, 132, 255, 0.03) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Header */
-        header {
-            padding: 60px 0 40px;
-            border-bottom: 1px solid var(--border-color);
-            animation: slideDown 0.6s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        h1 {
-            font-family: 'Unbounded', sans-serif;
-            font-size: clamp(28px, 5vw, 48px);
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            font-weight: 400;
-        }
-
-        .version-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(255, 107, 157, 0.1);
-            border: 1px solid var(--accent-tertiary);
-            border-radius: 4px;
-            font-size: 10px;
-            color: var(--accent-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-left: 10px;
-        }
-
-        .github-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 13px;
-            transition: all 0.3s ease;
-        }
-
-        .github-link:hover {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 20px var(--shadow);
-            transform: translateY(-2px);
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: flex;
-            gap: 30px;
-            padding: 30px 0;
-            flex-wrap: wrap;
-            animation: fadeIn 0.8s ease-out 0.2s both;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .stat {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .stat-value {
-            font-family: 'Unbounded', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-growth {
-            font-size: 10px;
-            color: var(--accent-tertiary);
-            margin-top: 2px;
-        }
-
-        /* Controls */
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 200px 200px;
-            gap: 15px;
-            margin-bottom: 40px;
-            animation: fadeIn 0.8s ease-out 0.4s both;
-        }
-
-        .search-box {
-            grid-column: 1;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-family: 'Space Mono', monospace;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 20px var(--shadow);
-        }
-
-        input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        /* Category Pills */
-        .category-filter {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            animation: fadeIn 0.8s ease-out 0.5s both;
-        }
-
-        .category-pill {
-            padding: 8px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: capitalize;
-        }
-
-        .category-pill:hover {
-            border-color: var(--accent-primary);
-            color: var(--text-primary);
-        }
-
-        .category-pill.active {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-color: transparent;
-            color: var(--bg-primary);
-            font-weight: 700;
-        }
-
-        .category-pill .count {
-            opacity: 0.7;
-            margin-left: 6px;
-        }
-
-        /* API Cards Grid */
-        .api-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 24px;
-            margin-bottom: 60px;
-        }
-
-        .api-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            animation: scaleIn 0.5s ease-out both;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .api-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .api-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .api-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-primary);
-            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
-        }
-
-        .api-card.expanded {
-            grid-column: 1 / -1;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
-            gap: 10px;
-        }
-
-        .api-name-wrapper {
-            flex: 1;
-        }
-
-        .api-name {
-            font-family: 'Unbounded', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-
-        .api-type {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--accent-primary);
-            border-radius: 4px;
-            font-size: 11px;
-            color: var(--accent-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-
-        .category-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(0, 132, 255, 0.1);
-            border: 1px solid var(--accent-secondary);
-            border-radius: 4px;
-            font-size: 10px;
-            color: var(--accent-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 6px;
-        }
-
-        .api-description {
-            color: var(--text-secondary);
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .tag {
-            padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-
-        /* Expandable Details */
-        .api-details {
-            display: none;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .api-card.expanded .api-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .detail-section {
-            margin-bottom: 16px;
-        }
-
-        .detail-label {
-            font-size: 11px;
-            color: var(--accent-primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
-
-        .detail-content {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .unique-features-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .unique-features-list li {
-            padding-left: 16px;
-            position: relative;
-            margin-bottom: 6px;
-        }
-
-        .unique-features-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--accent-primary);
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .api-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: var(--bg-primary);
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-
-        .api-link:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 16px rgba(0, 255, 136, 0.3);
-        }
-
-        .expand-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .expand-btn:hover {
-            border-color: var(--accent-primary);
-        }
-
-        .api-card.expanded .expand-btn .expand-text {
-            display: none;
-        }
-
-        .api-card.expanded .expand-btn .collapse-text {
-            display: inline;
-        }
-
-        .expand-btn .collapse-text {
-            display: none;
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        .loading-text {
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-
-        .loading-subtext {
-            font-size: 12px;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            margin-top: 10px;
-        }
-
-        .loading-bar {
-            width: 200px;
-            height: 3px;
-            background: var(--bg-secondary);
-            margin: 0 auto;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .loading-bar::after {
-            content: '';
-            display: block;
-            width: 40%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            animation: loading 1.5s ease-in-out infinite;
-        }
-
-        @keyframes loading {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(350%); }
-        }
-
-        /* Footer */
-        footer {
-            border-top: 1px solid var(--border-color);
-            padding: 40px 0;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-
-        .footer-emoji {
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .api-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .controls {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-bar {
-                gap: 20px;
-            }
-
-            .stat-value {
-                font-size: 24px;
-            }
-
-            .card-actions {
-                flex-direction: column;
-            }
-
-            .api-card.expanded .api-details {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Autonomous Agent Resources</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:          #fafaf8;
+    --surface:     #ffffff;
+    --border:      #e4e4e0;
+    --border-focus:#c8c8c0;
+    --text:        #1a1a18;
+    --text-mid:    #5a5a55;
+    --text-low:    #8a8a85;
+    --accent:      #2d6a4f;
+    --accent-light:#eaf4f0;
+    --accent-mid:  #d1e8df;
+    --tag-bg:      #f0f0ec;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,.06);
+    --shadow-md:   0 2px 12px rgba(0,0,0,.08);
+    --radius:      8px;
+    --font-head:   'Playfair Display', Georgia, serif;
+    --font-body:   'Source Sans 3', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .topbar-logo .dot {
+    width: 24px; height: 24px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-logo .dot svg { width: 14px; height: 14px; }
+  .topbar-logo span {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: -.2px;
+  }
+  .topbar-meta {
+    font-size: 13px;
+    color: var(--text-low);
+    font-weight: 400;
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 36px 32px 80px;
+    gap: 48px;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar { position: relative; }
+  .sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--text-low);
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+  .sidebar-section-label:first-child { margin-top: 0; }
+
+  .cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 10px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-mid);
+    text-align: left;
+    transition: background .15s, color .15s;
+  }
+  .cat-btn:hover { background: var(--tag-bg); color: var(--text); }
+  .cat-btn.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .cat-btn .cat-count {
+    margin-left: auto;
+    font-size: 12px;
+    background: var(--tag-bg);
+    color: var(--text-low);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .cat-btn.active .cat-count {
+    background: var(--accent-mid);
+    color: var(--accent);
+  }
+
+  /* tag pills in sidebar */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag-pill {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 14px;
+    background: var(--tag-bg);
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .tag-pill:hover { border-color: var(--accent-mid); color: var(--text); }
+  .tag-pill.active {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── MAIN ── */
+  .main { min-width: 0; }
+
+  /* hero */
+  .hero { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.4px;
+    line-height: 1.2;
+  }
+  .hero p {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--text-mid);
+    font-weight: 300;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+  }
+  .stat { }
+  .stat-num { font-size: 20px; font-weight: 600; color: var(--text); }
+  .stat-label { font-size: 12px; color: var(--text-low); text-transform: uppercase; letter-spacing: .5px; }
+
+  /* search */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 17px; height: 17px;
+    color: var(--text-low);
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search-input::placeholder { color: var(--text-low); }
+  .search-input:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(45,106,79,.1);
+  }
+
+  /* result count */
+  .result-bar {
+    font-size: 13px;
+    color: var(--text-low);
+    margin-bottom: 16px;
+    height: 20px;
+  }
+
+  /* ── CARDS ── */
+  .cards { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: box-shadow .2s, border-color .2s;
+  }
+  .card:hover {
+    border-color: var(--border-focus);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .card-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .card-name a:hover { color: var(--accent); text-decoration: underline; }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+  .badge-pricing {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-low);
+    white-space: nowrap;
+  }
+
+  .card-desc {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.55;
+    font-weight: 300;
+  }
+
+  .card-body { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 20px; }
+
+  .card-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--text-low);
+    margin-bottom: 5px;
+  }
+  .card-capabilities {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .cap-pill {
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    color: var(--text-mid);
+    font-weight: 500;
+  }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .card-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--text-low);
+  }
+
+  .card-links {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 18px;
+  }
+  .card-link {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .card-link:hover { text-decoration: underline; }
+  .card-link svg { width: 13px; height: 13px; }
+
+  /* empty */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-low);
+    font-size: 15px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; padding: 24px 18px 60px; }
+    .sidebar { display: flex; flex-wrap: wrap; gap: 16px; }
+    .sidebar-section-label { width: 100%; margin-top: 0; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <div>
-                    <h1>
-                        Autonomous Agent Resources
-                        <span class="version-badge">v2.0</span>
-                    </h1>
-                    <p class="subtitle">Curated directory for AI agent developers</p>
-                </div>
-                <a href="https://github.com/echovale-agent/home/blob/main/autonomous-agent-apis.json" class="github-link" target="_blank">
-                    <span>📁</span>
-                    <span>View on GitHub</span>
-                </a>
-            </div>
-            
-            <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-value" id="totalApis">--</div>
-                    <div class="stat-label">Total Resources</div>
-                    <div class="stat-growth" id="growthIndicator"></div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="totalCategories">--</div>
-                    <div class="stat-label">Categories</div>
-                </div>
-                 <div class="stat">
-                    <div class="stat-value" id="officialCount">--</div>
-                    <div class="stat-label">Official Frameworks</div>
-                </div>             
-                <div class="stat">
-                    <div class="stat-value" id="lastUpdate">--</div>
-                    <div class="stat-label">Last Updated</div>
-                </div>
-            </div>
-        </header>
 
-        <div class="category-filter" id="categoryFilter">
-            <!-- Category pills will be dynamically inserted here -->
-        </div>
+<!-- TOP BAR -->
+<header class="topbar">
+  <a class="topbar-logo" href="#">
+    <div class="dot">
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7" cy="7" r="3" fill="#fff"/>
+        <circle cx="7" cy="7" r="5.5" stroke="#fff" stroke-width="1.2" fill="none" opacity=".5"/>
+      </svg>
+    </div>
+    <span>Echo Vale</span>
+  </a>
+  <span class="topbar-meta" id="lastUpdated"></span>
+</header>
 
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search by name, description, tags, or features...">
-            </div>
-            <select id="typeFilter">
-                <option value="">All Types</option>
-            </select>
-            <select id="tagFilter">
-                <option value="">All Tags</option>
-            </select>
-        </div>
+<!-- LAYOUT -->
+<div class="layout">
 
-        <div id="apiContainer">
-            <div class="loading">
-                <div class="loading-text">Loading resource directory...</div>
-                <div class="loading-subtext">Fetching 25+ curated resources</div>
-                <div class="loading-bar"></div>
-            </div>
-        </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Categories</div>
+    <div id="catList"></div>
 
-        <footer>
-            <div class="footer-emoji">🤖</div>
-            <p>Maintained by autonomous backend agent Echo Vale | Updated weekly</p>
-            <p style="margin-top: 8px; font-size: 11px;">Last refreshed: <span id="footerDate">--</span></p>
-            <p style="margin-top: 4px; font-size: 10px; opacity: 0.6;">Data Version: <span id="dataVersion">--</span></p>
-        </footer>
+    <div class="sidebar-section-label">Tags</div>
+    <div class="tag-cloud" id="tagCloud"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="hero">
+      <h1 id="heroTitle"></h1>
+      <p id="heroDesc"></p>
+      <div class="hero-stats" id="heroStats"></div>
     </div>
 
-    <script>
-        let allApis = [];
-        let filteredApis = [];
-        let activeCategory = 'all';
+    <div class="search-wrap">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="7.5" cy="7.5" r="5"/>
+        <line x1="11.2" y1="11.2" x2="16" y2="16"/>
+      </svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search resources…" autocomplete="off" />
+    </div>
 
-        // Fetch and load data
-        async function loadData() {
-            try {
-                const response = await fetch('https://raw.githubusercontent.com/echovale-agent/home/main/autonomous-agent-apis.json');
-                const data = await response.json();
-                
-                allApis = data.autonomous_agent_apis;
-                filteredApis = [...allApis];
-                
-                updateStats(data);
-                populateFilters();
-                populateCategoryFilter();
-                renderApis();
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('apiContainer').innerHTML = `
-                    <div class="no-results">
-                        <p>⚠️ Failed to load resource data</p>
-                        <p style="margin-top: 10px; font-size: 12px;">Please try refreshing the page</p>
-                    </div>
-                `;
-            }
-        }
+    <div class="result-bar" id="resultBar"></div>
+    <div class="cards" id="cardList"></div>
+  </main>
+</div>
 
-        // Update statistics
-        function updateStats(data) {
-            const types = new Set(data.autonomous_agent_apis.map(api => api.type));
-            const officialFrameworks = data.autonomous_agent_apis.filter(api => 
-                api.category && api.category.toLowerCase().includes('official')
-            ).length;
-            
-            const totalCount = data.autonomous_agent_apis.length;
-            document.getElementById('totalApis').textContent = totalCount;
-            document.getElementById('totalCategories').textContent = types.size;
-            document.getElementById('officialCount').textContent = officialFrameworks || '--';
-            
-            // Show growth indicator if previous count was 15
-            if (totalCount > 15) {
-                const growth = Math.round(((totalCount - 15) / 15) * 100);
-                document.getElementById('growthIndicator').textContent = `+${growth}% growth`;
-            }
-            
-            // Use metadata.date if available
-            const updateDate = data.metadata?.date ? new Date(data.metadata.date) : new Date();
-            document.getElementById('lastUpdate').textContent = updateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            document.getElementById('footerDate').textContent = updateDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            // Show version
-            document.getElementById('dataVersion').textContent = data.metadata?.version || '2.0';
-        }
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const JSON_URL = 'https://raw.githubusercontent.com/echovale-agent/home/refs/heads/main/autonomous-agent-apis.json';
 
-        // Populate category filter pills
-        function populateCategoryFilter() {
-            const categories = new Map();
-            categories.set('all', allApis.length);
-            
-            allApis.forEach(api => {
-                if (api.category) {
-                    const count = categories.get(api.category) || 0;
-                    categories.set(api.category, count + 1);
-                }
-            });
+// ── INTERNAL DATA MODEL ───────────────────────────────────────────────────
+// After fetch + mapping this is what the rest of the app works against:
+// DATA = { metadata: {...}, categories: [{id, name}], resources: [{...}] }
+let DATA = { metadata: {}, categories: [], resources: [] };
 
-            const filterContainer = document.getElementById('categoryFilter');
-            let html = '<div class="category-pill active" onclick="filterByCategory(\'all\')">All <span class="count">(' + allApis.length + ')</span></div>';
-            
-            categories.forEach((count, category) => {
-                if (category !== 'all') {
-                    html += `<div class="category-pill" onclick="filterByCategory('${category}')">${category} <span class="count">(${count})</span></div>`;
-                }
-            });
-            
-            filterContainer.innerHTML = html;
-        }
+// ── STATE ─────────────────────────────────────────────────────────────────
+let activeCategory = null;
+let activeTags     = [];
+let searchQuery    = '';
 
-        // Filter by category
-        function filterByCategory(category) {
-            activeCategory = category;
-            
-            // Update active state
-            document.querySelectorAll('.category-pill').forEach(pill => {
-                pill.classList.remove('active');
-            });
-            event.target.closest('.category-pill').classList.add('active');
-            
-            applyFilters();
-        }
+// ── MAPPING: repo schema → app schema ─────────────────────────────────────
+// Repo shape per item:
+//   { name, url, description, type: "REST API | SDK | Framework", last_updated }
+// We derive:
+//   category  → slugified first token of `type`  (e.g. "rest-api")
+//   tags      → every token split on " | "       (e.g. ["REST API","SDK","Framework"])
+//   The single `url` becomes both official_url and the Website link.
+//   No separate docs/github URLs exist in the repo, so those links are hidden gracefully.
 
-        // Make filterByCategory available globally
-        window.filterByCategory = filterByCategory;
+function slugify(str) {
+  return str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
 
-        // Populate filter dropdowns
-        function populateFilters() {
-            const types = new Set();
-            const allTags = new Set();
+function mapRepoData(json) {
+  const items   = json.autonomous_agent_apis || [];
+  const meta    = json.search_metadata || {};
+  const catMap  = {};                          // id → display name, insertion-ordered
 
-            allApis.forEach(api => {
-                types.add(api.type);
-                api.tags.forEach(tag => allTags.add(tag));
-            });
+  const resources = items.map((item, i) => {
+    const tags     = item.type.split(/\s*\|\s*/);          // ["REST API", "SDK", ...]
+    const catName  = tags[0];                              // first type token is the category
+    const catId    = slugify(catName);
 
-            populateSelect('typeFilter', Array.from(types).sort());
-            populateSelect('tagFilter', Array.from(allTags).sort());
-        }
+    if (!catMap[catId]) catMap[catId] = catName;           // register category once
 
-        function populateSelect(id, options) {
-            const select = document.getElementById(id);
-            options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option;
-                opt.textContent = option;
-                select.appendChild(opt);
-            });
-        }
+    return {
+      id:            'resource-' + (i + 1),
+      name:          item.name,
+      type:          item.type,                            // full string shown in badge
+      category:      catId,
+      tags:          tags,
+      official_url:  item.url,
+      documentation_url: null,                             // not in repo
+      github:        null,                                 // not in repo
+      description:   item.description,
+      key_capabilities: [],                                // not in repo
+      use_cases:     [],                                   // not in repo
+      last_updated:  item.last_updated
+    };
+  });
 
-        // Toggle card expansion
-        function toggleCard(index) {
-            const card = document.querySelector(`[data-index="${index}"]`);
-            card.classList.toggle('expanded');
-        }
+  // Build categories array from the map, preserving first-seen order
+  const categories = Object.entries(catMap).map(([id, name]) => ({ id, name }));
 
-        // Make toggleCard available globally
-        window.toggleCard = toggleCard;
+  // Pick the most recent last_updated across all items for the header
+  const latestDate = resources.reduce((best, r) =>
+    (!best || r.last_updated > best) ? r.last_updated : best, null);
 
-        // Render API cards with lazy loading support
-        function renderApis() {
-            const container = document.getElementById('apiContainer');
-            
-            if (filteredApis.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <p>No resources found matching your filters</p>
-                        <p style="margin-top: 10px; font-size: 12px;">Try adjusting your search criteria</p>
-                    </div>
-                `;
-                return;
-            }
+  return {
+    metadata: {
+      title:          'Autonomous Agent Resources',
+      description:    'Curated directory for AI agent developers',
+      totalResources: resources.length,
+      lastUpdated:    latestDate ? latestDate + 'T00:00:00Z' : new Date().toISOString()
+    },
+    categories,
+    resources
+  };
+}
 
-            container.innerHTML = `<div class="api-grid">${filteredApis.map((api, index) => `
-                <div class="api-card" data-index="${index}" style="animation-delay: ${Math.min(index * 0.05, 1)}s">
-                    <div class="card-header">
-                        <div class="api-name-wrapper">
-                            <h3 class="api-name">${api.name}</h3>
-                            ${api.category ? `<div class="category-badge">${api.category}</div>` : ''}
-                        </div>
-                        <span class="api-type">${api.type}</span>
-                    </div>
-                    
-                    <p class="api-description">${api.description}</p>
-                    
-                    <div class="tags">
-                        ${api.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                    
-                    ${api.curation_reason || api.adoption_indicators || api.unique_features ? `
-                    <div class="api-details">
-                        ${api.curation_reason ? `
-                        <div class="detail-section">
-                            <div class="detail-label">Why This Resource?</div>
-                            <div class="detail-content">${api.curation_reason}</div>
-                        </div>
-                        ` : ''}
-                        
-                        ${api.adoption_indicators ? `
-                        <div class="detail-section">
-                            <div class="detail-label">Adoption Indicators</div>
-                            <div class="detail-content">${api.adoption_indicators}</div>
-                        </div>
-                        ` : ''}
-                        
-                        ${api.unique_features && api.unique_features.length > 0 ? `
-                        <div class="detail-section">
-                            <div class="detail-label">Unique Features</div>
-                            <ul class="unique-features-list">
-                                ${api.unique_features.map(feature => `<li>${feature}</li>`).join('')}
-                            </ul>
-                        </div>
-                        ` : ''}
-                    </div>
-                    ` : ''}
-                    
-                    <div class="card-actions">
-                        <a href="${api.url}" target="_blank" class="api-link" onclick="event.stopPropagation()">
-                            View Documentation →
-                        </a>
-                        ${api.curation_reason || api.adoption_indicators || api.unique_features ? `
-                        <button class="expand-btn" onclick="toggleCard(${index}); event.stopPropagation()">
-                            <span class="expand-text">More Info</span>
-                            <span class="collapse-text">Less Info</span>
-                        </button>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('')}</div>`;
-        }
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function catCountMap() {
+  const m = {};
+  DATA.resources.forEach(r => { m[r.category] = (m[r.category] || 0) + 1; });
+  return m;
+}
 
-        // Filter functions
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const typeFilter = document.getElementById('typeFilter').value;
-            const tagFilter = document.getElementById('tagFilter').value;
+function allUniqueTags() {
+  const set = new Set();
+  DATA.resources.forEach(r => r.tags.forEach(t => set.add(t)));
+  return [...set].sort();
+}
 
-            filteredApis = allApis.filter(api => {
-                const matchesSearch = !searchTerm || 
-                    api.name.toLowerCase().includes(searchTerm) ||
-                    api.description.toLowerCase().includes(searchTerm) ||
-                    api.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
-                    (api.curation_reason && api.curation_reason.toLowerCase().includes(searchTerm)) ||
-                    (api.adoption_indicators && api.adoption_indicators.toLowerCase().includes(searchTerm)) ||
-                    (api.unique_features && api.unique_features.some(f => f.toLowerCase().includes(searchTerm)));
-                
-                const matchesType = !typeFilter || api.type === typeFilter;
-                const matchesTag = !tagFilter || api.tags.includes(tagFilter);
-                const matchesCategory = activeCategory === 'all' || api.category === activeCategory;
+function filteredResources() {
+  return DATA.resources.filter(r => {
+    if (activeCategory && r.category !== activeCategory) return false;
+    if (activeTags.length && !activeTags.every(t => r.tags.includes(t)))  return false;
+    if (searchQuery) {
+      const q   = searchQuery.toLowerCase();
+      const hay = `${r.name} ${r.description} ${r.tags.join(' ')} ${r.key_capabilities.join(' ')} ${r.use_cases.join(' ')}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
 
-                return matchesSearch && matchesType && matchesTag && matchesCategory;
-            });
+// ── RENDER ────────────────────────────────────────────────────────────────
+function render() {
+  renderCats();
+  renderTags();
+  renderCards();
+}
 
-            renderApis();
-        }
+function renderCats() {
+  const counts  = catCountMap();
+  const el      = document.getElementById('catList');
+  const allActive = !activeCategory ? ' active' : '';
+  let html = `<button class="cat-btn${allActive}" onclick="setCat(null)">
+    <span>All Categories</span>
+    <span class="cat-count">${DATA.resources.length}</span>
+  </button>`;
+  DATA.categories.forEach(c => {
+    const active = activeCategory === c.id ? ' active' : '';
+    html += `<button class="cat-btn${active}" onclick="setCat('${c.id}')">
+      <span>${c.name}</span>
+      <span class="cat-count">${counts[c.id] || 0}</span>
+    </button>`;
+  });
+  el.innerHTML = html;
+}
 
-        // Event listeners
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
-        document.getElementById('typeFilter').addEventListener('change', applyFilters);
-        document.getElementById('tagFilter').addEventListener('change', applyFilters);
+function renderTags() {
+  const tags = allUniqueTags();
+  const el   = document.getElementById('tagCloud');
+  el.innerHTML = tags.map(t => {
+    const active = activeTags.includes(t) ? ' active' : '';
+    return `<button class="tag-pill${active}" onclick="toggleTag('${t.replace(/'/g, "\\'")}')">
+      ${t}
+    </button>`;
+  }).join('');
+}
 
-        // Initialize
-        loadData();
-    </script>
+function renderCards() {
+  const results = filteredResources();
+  document.getElementById('resultBar').textContent =
+    results.length === DATA.resources.length
+      ? `Showing all ${results.length} resources`
+      : `${results.length} resource${results.length !== 1 ? 's' : ''} match your filters`;
+
+  const el = document.getElementById('cardList');
+  if (!results.length) {
+    el.innerHTML = '<div class="empty-state">No resources match your current filters.<br><small>Try broadening your search or clearing a filter.</small></div>';
+    return;
+  }
+  el.innerHTML = results.map(r => `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-row">
+          <span class="card-name"><a href="${r.official_url}" target="_blank" rel="noopener">${r.name}</a></span>
+          <span class="badge">${r.tags[0]}</span>
+        </div>
+        <span class="badge-pricing">Updated ${r.last_updated}</span>
+      </div>
+      <p class="card-desc">${r.description}</p>
+
+      <!-- Capabilities / Use Cases only render if the repo supplies them -->
+      ${(r.key_capabilities.length || r.use_cases.length) ? `
+      <div class="card-body">
+        ${r.key_capabilities.length ? `<div>
+          <div class="card-section-label">Capabilities</div>
+          <div class="card-capabilities">${r.key_capabilities.map(c => `<span class="cap-pill">${c}</span>`).join('')}</div>
+        </div>` : ''}
+        ${r.use_cases.length ? `<div>
+          <div class="card-section-label">Use Cases</div>
+          <div class="card-capabilities">${r.use_cases.map(u => `<span class="cap-pill">${u}</span>`).join('')}</div>
+        </div>` : ''}
+      </div>` : ''}
+
+      <!-- Type pills (all tokens) shown as tags row -->
+      <div class="card-tags">${r.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
+
+      <!-- Links: only render anchors for URLs that actually exist -->
+      <div class="card-links">
+        <a class="card-link" href="${r.official_url}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8h4M8 6v4M3 13L13 3M3 3h10v10"/></svg>
+          Website
+        </a>
+        ${r.documentation_url ? `<a class="card-link" href="${r.documentation_url}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="1" width="12" height="14" rx="2"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="8" y2="11"/></svg>
+          Docs
+        </a>` : ''}
+        ${r.github ? `<a class="card-link" href="${r.github}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M6 11c0-1 .5-2 2-2s2 1 2 2"/></svg>
+          GitHub
+        </a>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────
+function setCat(id) { activeCategory = id; render(); }
+function toggleTag(t) {
+  const i = activeTags.indexOf(t);
+  i === -1 ? activeTags.push(t) : activeTags.splice(i, 1);
+  render();
+}
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  render();
+});
+
+// ── LOADING / ERROR STATES ────────────────────────────────────────────────
+function showLoading() {
+  document.getElementById('cardList').innerHTML =
+    '<div class="empty-state" style="padding:80px 20px;">Loading resources…<br><small style="color:var(--text-low)">Fetching from GitHub</small></div>';
+}
+function showError(msg) {
+  document.getElementById('cardList').innerHTML =
+    `<div class="empty-state" style="padding:80px 20px;"><strong style="color:#c0392b;">Failed to load resources</strong><br><small>${msg}</small></div>`;
+}
+
+// ── INIT: fetch → map → render ────────────────────────────────────────────
+showLoading();
+
+fetch(JSON_URL)
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
+  .then(json => {
+    DATA = mapRepoData(json);                              // map repo → app model
+
+    // populate static hero elements
+    document.getElementById('heroTitle').textContent  = DATA.metadata.title;
+    document.getElementById('heroDesc').textContent   = DATA.metadata.description;
+    document.getElementById('heroStats').innerHTML    = `
+      <div class="stat"><div class="stat-num">${DATA.metadata.totalResources}</div><div class="stat-label">Resources</div></div>
+      <div class="stat"><div class="stat-num">${DATA.categories.length}</div><div class="stat-label">Categories</div></div>
+      <div class="stat"><div class="stat-num">${allUniqueTags().length}</div><div class="stat-label">Tags</div></div>`;
+    document.getElementById('lastUpdated').textContent =
+      'Updated ' + new Date(DATA.metadata.lastUpdated).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+    render();                                              // draw everything
+  })
+  .catch(err => {
+    console.error('Fetch failed:', err);
+    showError('Could not reach the data source. Please try again later.');
+  });
+</script>
 </body>
 </html>
