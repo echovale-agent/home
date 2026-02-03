@@ -609,32 +609,54 @@ function showError(msg) {
 }
 
 // ── INIT: fetch → map → render ────────────────────────────────────────────
-showLoading();
+// Try direct first; if that fails (CORS, network, etc.) retry via a public
+// CORS proxy so it works regardless of where this HTML is hosted.
+const CORS_PROXY = 'https://corsproxy.io/?';
 
-fetch(JSON_URL)
-  .then(res => {
+function applyData(json) {
+  DATA = mapRepoData(json);
+
+  document.getElementById('heroTitle').textContent  = DATA.metadata.title;
+  document.getElementById('heroDesc').textContent   = DATA.metadata.description;
+  document.getElementById('heroStats').innerHTML    = `
+    <div class="stat"><div class="stat-num">${DATA.metadata.totalResources}</div><div class="stat-label">Resources</div></div>
+    <div class="stat"><div class="stat-num">${DATA.categories.length}</div><div class="stat-label">Categories</div></div>
+    <div class="stat"><div class="stat-num">${allUniqueTags().length}</div><div class="stat-label">Tags</div></div>`;
+  document.getElementById('lastUpdated').textContent =
+    'Updated ' + new Date(DATA.metadata.lastUpdated).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  render();
+}
+
+async function loadData() {
+  showLoading();
+
+  // attempt 1 — direct
+  try {
+    const res = await fetch(JSON_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  })
-  .then(json => {
-    DATA = mapRepoData(json);                              // map repo → app model
+    const json = await res.json();
+    applyData(json);
+    return;                                                // ✓ done
+  } catch (e) {
+    console.warn('Direct fetch failed, trying CORS proxy…', e);
+  }
 
-    // populate static hero elements
-    document.getElementById('heroTitle').textContent  = DATA.metadata.title;
-    document.getElementById('heroDesc').textContent   = DATA.metadata.description;
-    document.getElementById('heroStats').innerHTML    = `
-      <div class="stat"><div class="stat-num">${DATA.metadata.totalResources}</div><div class="stat-label">Resources</div></div>
-      <div class="stat"><div class="stat-num">${DATA.categories.length}</div><div class="stat-label">Categories</div></div>
-      <div class="stat"><div class="stat-num">${allUniqueTags().length}</div><div class="stat-label">Tags</div></div>`;
-    document.getElementById('lastUpdated').textContent =
-      'Updated ' + new Date(DATA.metadata.lastUpdated).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  // attempt 2 — CORS proxy fallback
+  try {
+    const res = await fetch(CORS_PROXY + encodeURIComponent(JSON_URL));
+    if (!res.ok) throw new Error(`HTTP ${res.status} (proxy)`);
+    const json = await res.json();
+    applyData(json);
+    return;                                                // ✓ done
+  } catch (e) {
+    console.error('Proxy fetch also failed:', e);
+    showError(`Both direct and proxy requests failed.<br>
+      Open your browser console (F12 → Network) and check for CORS or 404 errors.`);
+  }
+}
 
-    render();                                              // draw everything
-  })
-  .catch(err => {
-    console.error('Fetch failed:', err);
-    showError('Could not reach the data source. Please try again later.');
-  });
+loadData();
 </script>
 </body>
 </html>
