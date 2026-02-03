@@ -1,55 +1,49 @@
-## FlowHunt
+
+
+## New Autonomous Agent Platforms
+
+### Kore.ai
+- **Official URL**: [kore.ai](https://www.kore.ai/)
+- **Documentation**: [Kore.ai Documentation](https://www.kore.ai/docs)
+- **Pricing**: Session-based, usage-based, and per-seat pricing models; volume discounts for larger deployments.
+- **Description**: Kore.ai provides an enterprise-grade platform for building, deploying, and managing AI agents across various applications, with a strong focus on governance and observability.
+- **Key Features**:
+  - Multi-agent orchestration
+  - AI governance dashboard
+  - Extensive enterprise integration capabilities
+  - Pre-built AI agents and templates
+
+### MIT Sloan
+- **Official URL**: [MIT Sloan](https://mitsloan.mit.edu/ideas-made-to-matter/ai-agents-tech-circularity-whats-ahead-platforms-2026)
+- **Description**: Discusses the emergence of autonomous agents capable of acting on behalf of users, highlighting the need for businesses to adapt platforms for agentic AI and the hidden costs associated with AI tools.
+- **Key Insights**:
+  - The importance of adapting platforms for agentic AI
+  - Addressing the hidden costs of AI tools
+  - The emergence of circular economies in technology
+
+### FlowHunt
 - **Official URL**: [flowhunt.io](https://www.flowhunt.io/)
-- **Documentation**: [FlowHunt Documentation](https://www.flowhunt.io/docs)  
-- **Pricing**: Free tier available; Pro plans starting at $29/month with usage-based scaling for enterprise deployments.
-- **Description**: FlowHunt is a no-code AI agent building platform that allows organizations to create, deploy, and manage agents seamlessly across various applications. Its visual workflow builder enables rapid prototyping and deployment.
+- **Documentation**: [FlowHunt Documentation](https://www.flowhunt.io/docs)
+- **Pricing**: Free tier available; Pro plans starting at $29/month.
+- **Description**: A no-code AI agent building platform that enables organizations to create, deploy, and manage agents seamlessly across various applications.
 - **Key Features**:
-  - Drag-and-drop interface for building agents
-  - Multi-model support including integration with GPT-4 and others
+  - Drag-and-drop interface
+  - Multi-model support
   - Omnichannel deployment capabilities
-  - Comprehensive analytics for monitoring agent performance
-- **Research Date**: February 2026
+  - Comprehensive analytics
 
-## Relevance AI
-- **Official URL**: [relevance.ai](https://www.relevance.ai/)
-- **Documentation**: [Relevance AI Documentation](https://www.relevance.ai/docs)  
-- **Pricing**: Usage-based pricing model.
-- **Description**: Relevance AI offers a no-code platform for building AI agents focused on rapid development and deployment, featuring extensive integrations with business applications.
+### CapSolver
+- **Official URL**: [capsolver.com](https://www.capsolver.com/)
+- **Description**: Provides a robust API for handling web challenges, enabling AI agents to navigate websites and perform automated tasks successfully.
 - **Key Features**:
-  - Intuitive visual workflow builder
-  - Role-aware recommendations and natural-language question answering
-  - Contextual search capabilities
-- **Research Date**: February 2026
+  - Integration with various AI agent frameworks
+  - Programmatic handling of web challenges
+  - Supports high-volume automated tasks
 
-## Zapier Central
-- **Official URL**: [zapier.com](https://zapier.com/)
-- **Documentation**: [Zapier Documentation](https://zapier.com/help)  
-- **Pricing**: Subscription-based pricing with various tiers.
-- **Description**: Zapier Central allows organizations to leverage its extensive integration ecosystem to create intelligent agents that automate workflows across thousands of applications.
-- **Key Features**:
-  - Intuitive automation workflows
-  - Connects to over 7,000 applications
-  - Transition from simple automations to autonomous agents
-- **Research Date**: February 2026
-
-## Microsoft Copilot Studio
-- **Official URL**: [microsoft.com](https://www.microsoft.com/en-us/microsoft-365/copilot)
-- **Documentation**: [Copilot Documentation](https://docs.microsoft.com/en-us/microsoft-365/copilot)  
-- **Pricing**: Subscription required; pricing varies by organization.
-- **Description**: Microsoft Copilot Studio integrates AI capabilities within the Microsoft ecosystem, allowing users to build agents that optimize productivity across Microsoft applications.
-- **Key Features**:
-  - Contextual integration with Microsoft tools
-  - AI-driven productivity enhancements
-  - Flexible deployment across multiple platforms
-- **Research Date**: February 2026
-
-## Google Vertex AI
-- **Official URL**: [cloud.google.com/vertex-ai](https://cloud.google.com/vertex-ai)
-- **Documentation**: [Vertex AI Documentation](https://cloud.google.com/vertex-ai/docs)  
-- **Pricing**: Usage-based pricing model.
-- **Description**: Google Vertex AI is a comprehensive platform for building, training, and deploying scalable AI agents, integrated with Google Cloud services for enhanced capabilities.
-- **Key Features**:
-  - No-code and code-based agent building options
-  - Multimodal processing capabilities
-  - Robust infrastructure for production deployment
-- **Research Date**: February 2026
+### Machine Learning Mastery
+- **Official URL**: [Machine Learning Mastery](https://machinelearningmastery.com/7-agentic-ai-trends-to-watch-in-2026/)
+- **Description**: Discusses seven emerging trends in agentic AI, highlighting the shift from prototypes to production-ready systems and the importance of governance and cost optimization.
+- **Key Insights**:
+  - The significance of multi-agent orchestration
+  - Protocol standardization for agent communication
+  - The need for robust governance frameworks
