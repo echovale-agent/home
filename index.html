@@ -394,11 +394,11 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────
-const JSON_URL = 'https://raw.githubusercontent.com/echovale-agent/home/refs/heads/main/autonomous-agent-apis.json';
+// Netlify serves the JSON from the same repo as a static asset — use the
+// local path.  No cross-origin fetch needed at all.
+const JSON_URL = '/autonomous-agent-apis.json';
 
 // ── INTERNAL DATA MODEL ───────────────────────────────────────────────────
-// After fetch + mapping this is what the rest of the app works against:
-// DATA = { metadata: {...}, categories: [{id, name}], resources: [{...}] }
 let DATA = { metadata: {}, categories: [], resources: [] };
 
 // ── STATE ─────────────────────────────────────────────────────────────────
@@ -406,51 +406,64 @@ let activeCategory = null;
 let activeTags     = [];
 let searchQuery    = '';
 
-// ── MAPPING: repo schema → app schema ─────────────────────────────────────
-// Repo shape per item:
-//   { name, url, description, type: "REST API | SDK | Framework", last_updated }
-// We derive:
-//   category  → slugified first token of `type`  (e.g. "rest-api")
-//   tags      → every token split on " | "       (e.g. ["REST API","SDK","Framework"])
-//   The single `url` becomes both official_url and the Website link.
-//   No separate docs/github URLs exist in the repo, so those links are hidden gracefully.
+// ── MAPPING ───────────────────────────────────────────────────────────────
+// Two possible shapes can come back from the JSON file:
+//
+//  A) "v2 full" — has .resources[], .categories[], .tags[], .metadata
+//     (the 10-resource backend payload)
+//  B) "flat"    — has .autonomous_agent_apis[] with {name, url, description,
+//     type, last_updated}  (the 4-resource GitHub snapshot)
+//
+// Detect which one arrived and normalise both into the same internal model.
 
 function slugify(str) {
   return str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
 
-function mapRepoData(json) {
-  const items   = json.autonomous_agent_apis || [];
-  const meta    = json.search_metadata || {};
-  const catMap  = {};                          // id → display name, insertion-ordered
+// ── Schema A: v2 full — almost ready, just normalise a couple of fields so
+//    the card template can use one consistent set of names.
+function mapV2Full(json) {
+  return {
+    metadata: {
+      ...json.metadata,
+      // lastUpdated lives on the JSON root in v2, not inside metadata
+      lastUpdated: json.lastUpdated || json.metadata.lastUpdated || new Date().toISOString()
+    },
+    categories: json.categories,
+    resources: json.resources.map(r => ({
+      ...r,
+      last_updated: r.last_updated || r.addedDate || ''   // card template uses last_updated
+    }))
+  };
+}
+
+// ── Schema B: flat list, derive categories + tags from the `type` field ────
+function mapFlat(json) {
+  const items  = json.autonomous_agent_apis;
+  const catMap = {};
 
   const resources = items.map((item, i) => {
-    const tags     = item.type.split(/\s*\|\s*/);          // ["REST API", "SDK", ...]
-    const catName  = tags[0];                              // first type token is the category
-    const catId    = slugify(catName);
-
-    if (!catMap[catId]) catMap[catId] = catName;           // register category once
+    const tags   = item.type.split(/\s*\|\s*/);
+    const catId  = slugify(tags[0]);
+    if (!catMap[catId]) catMap[catId] = tags[0];
 
     return {
-      id:            'resource-' + (i + 1),
-      name:          item.name,
-      type:          item.type,                            // full string shown in badge
-      category:      catId,
-      tags:          tags,
-      official_url:  item.url,
-      documentation_url: null,                             // not in repo
-      github:        null,                                 // not in repo
-      description:   item.description,
-      key_capabilities: [],                                // not in repo
-      use_cases:     [],                                   // not in repo
-      last_updated:  item.last_updated
+      id:                 'resource-' + (i + 1),
+      name:               item.name,
+      type:               item.type,
+      category:           catId,
+      tags:               tags,
+      official_url:       item.url,
+      documentation_url:  null,
+      github:             null,
+      description:        item.description,
+      key_capabilities:   [],
+      use_cases:          [],
+      last_updated:       item.last_updated
     };
   });
 
-  // Build categories array from the map, preserving first-seen order
   const categories = Object.entries(catMap).map(([id, name]) => ({ id, name }));
-
-  // Pick the most recent last_updated across all items for the header
   const latestDate = resources.reduce((best, r) =>
     (!best || r.last_updated > best) ? r.last_updated : best, null);
 
@@ -464,6 +477,13 @@ function mapRepoData(json) {
     categories,
     resources
   };
+}
+
+// ── Pick the right mapper automatically ─────────────────────────────────────
+function mapRepoData(json) {
+  if (json.resources && Array.isArray(json.resources)) return mapV2Full(json);   // Schema A
+  if (json.autonomous_agent_apis)                      return mapFlat(json);     // Schema B
+  throw new Error('Unrecognised JSON shape — no .resources or .autonomous_agent_apis found');
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -547,7 +567,7 @@ function renderCards() {
           <span class="card-name"><a href="${r.official_url}" target="_blank" rel="noopener">${r.name}</a></span>
           <span class="badge">${r.tags[0]}</span>
         </div>
-        <span class="badge-pricing">Updated ${r.last_updated}</span>
+        <span class="badge-pricing">${r.pricing_model || ('Updated ' + r.last_updated)}</span>
       </div>
       <p class="card-desc">${r.description}</p>
 
@@ -608,11 +628,7 @@ function showError(msg) {
     `<div class="empty-state" style="padding:80px 20px;"><strong style="color:#c0392b;">Failed to load resources</strong><br><small>${msg}</small></div>`;
 }
 
-// ── INIT: fetch → map → render ────────────────────────────────────────────
-// Try direct first; if that fails (CORS, network, etc.) retry via a public
-// CORS proxy so it works regardless of where this HTML is hosted.
-const CORS_PROXY = 'https://corsproxy.io/?';
-
+// ── APPLY ─────────────────────────────────────────────────────────────────
 function applyData(json) {
   DATA = mapRepoData(json);
 
@@ -628,35 +644,21 @@ function applyData(json) {
   render();
 }
 
-async function loadData() {
-  showLoading();
+// ── INIT: fetch → map → render ────────────────────────────────────────────
+showLoading();
 
-  // attempt 1 — direct
-  try {
-    const res = await fetch(JSON_URL);
+fetch(JSON_URL)
+  .then(res => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
+    return res.json();
+  })
+  .then(json => {
     applyData(json);
-    return;                                                // ✓ done
-  } catch (e) {
-    console.warn('Direct fetch failed, trying CORS proxy…', e);
-  }
-
-  // attempt 2 — CORS proxy fallback
-  try {
-    const res = await fetch(CORS_PROXY + encodeURIComponent(JSON_URL));
-    if (!res.ok) throw new Error(`HTTP ${res.status} (proxy)`);
-    const json = await res.json();
-    applyData(json);
-    return;                                                // ✓ done
-  } catch (e) {
-    console.error('Proxy fetch also failed:', e);
-    showError(`Both direct and proxy requests failed.<br>
-      Open your browser console (F12 → Network) and check for CORS or 404 errors.`);
-  }
-}
-
-loadData();
+  })
+  .catch(err => {
+    console.error('Fetch failed:', err);
+    showError(`Could not load data: ${err.message}`);
+  });
 </script>
 </body>
 </html>
