@@ -1,664 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Autonomous Agent Resources</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --bg:          #fafaf8;
-    --surface:     #ffffff;
-    --border:      #e4e4e0;
-    --border-focus:#c8c8c0;
-    --text:        #1a1a18;
-    --text-mid:    #5a5a55;
-    --text-low:    #8a8a85;
-    --accent:      #2d6a4f;
-    --accent-light:#eaf4f0;
-    --accent-mid:  #d1e8df;
-    --tag-bg:      #f0f0ec;
-    --shadow-sm:   0 1px 3px rgba(0,0,0,.06);
-    --shadow-md:   0 2px 12px rgba(0,0,0,.08);
-    --radius:      8px;
-    --font-head:   'Playfair Display', Georgia, serif;
-    --font-body:   'Source Sans 3', system-ui, sans-serif;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* ── TOP BAR ── */
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .topbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-  .topbar-logo .dot {
-    width: 24px; height: 24px;
-    background: var(--accent);
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .topbar-logo .dot svg { width: 14px; height: 14px; }
-  .topbar-logo span {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text);
-    letter-spacing: -.2px;
-  }
-  .topbar-meta {
-    font-size: 13px;
-    color: var(--text-low);
-    font-weight: 400;
-  }
-
-  /* ── LAYOUT ── */
-  .layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 36px 32px 80px;
-    gap: 48px;
-  }
-
-  /* ── SIDEBAR ── */
-  .sidebar { position: relative; }
-  .sidebar-section-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    color: var(--text-low);
-    margin-bottom: 10px;
-    margin-top: 24px;
-  }
-  .sidebar-section-label:first-child { margin-top: 0; }
-
-  .cat-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    background: none;
-    border: none;
-    border-radius: 6px;
-    padding: 7px 10px;
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--text-mid);
-    text-align: left;
-    transition: background .15s, color .15s;
-  }
-  .cat-btn:hover { background: var(--tag-bg); color: var(--text); }
-  .cat-btn.active {
-    background: var(--accent-light);
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .cat-btn .cat-count {
-    margin-left: auto;
-    font-size: 12px;
-    background: var(--tag-bg);
-    color: var(--text-low);
-    padding: 1px 7px;
-    border-radius: 10px;
-    font-weight: 500;
-  }
-  .cat-btn.active .cat-count {
-    background: var(--accent-mid);
-    color: var(--accent);
-  }
-
-  /* tag pills in sidebar */
-  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .tag-pill {
-    font-size: 12px;
-    padding: 3px 10px;
-    border-radius: 14px;
-    background: var(--tag-bg);
-    color: var(--text-mid);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    font-family: var(--font-body);
-    transition: background .15s, border-color .15s, color .15s;
-  }
-  .tag-pill:hover { border-color: var(--accent-mid); color: var(--text); }
-  .tag-pill.active {
-    background: var(--accent-light);
-    border-color: var(--accent-mid);
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  /* ── MAIN ── */
-  .main { min-width: 0; }
-
-  /* hero */
-  .hero { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
-  .hero h1 {
-    font-family: var(--font-head);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -.4px;
-    line-height: 1.2;
-  }
-  .hero p {
-    margin-top: 8px;
-    font-size: 15px;
-    color: var(--text-mid);
-    font-weight: 300;
-  }
-  .hero-stats {
-    display: flex;
-    gap: 28px;
-    margin-top: 18px;
-  }
-  .stat { }
-  .stat-num { font-size: 20px; font-weight: 600; color: var(--text); }
-  .stat-label { font-size: 12px; color: var(--text-low); text-transform: uppercase; letter-spacing: .5px; }
-
-  /* search */
-  .search-wrap {
-    position: relative;
-    margin-bottom: 24px;
-  }
-  .search-wrap svg {
-    position: absolute;
-    left: 12px; top: 50%;
-    transform: translateY(-50%);
-    width: 17px; height: 17px;
-    color: var(--text-low);
-    pointer-events: none;
-  }
-  .search-input {
-    width: 100%;
-    padding: 10px 14px 10px 36px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
-    font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--text);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .search-input::placeholder { color: var(--text-low); }
-  .search-input:focus {
-    border-color: var(--accent-mid);
-    box-shadow: 0 0 0 3px rgba(45,106,79,.1);
-  }
-
-  /* result count */
-  .result-bar {
-    font-size: 13px;
-    color: var(--text-low);
-    margin-bottom: 16px;
-    height: 20px;
-  }
-
-  /* ── CARDS ── */
-  .cards { display: flex; flex-direction: column; gap: 12px; }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 22px;
-    transition: box-shadow .2s, border-color .2s;
-  }
-  .card:hover {
-    border-color: var(--border-focus);
-    box-shadow: var(--shadow-md);
-  }
-
-  .card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .card-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .card-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .card-name a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .card-name a:hover { color: var(--accent); text-decoration: underline; }
-
-  .badge {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-  .badge-pricing {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-low);
-    white-space: nowrap;
-  }
-
-  .card-desc {
-    margin-top: 8px;
-    font-size: 14px;
-    color: var(--text-mid);
-    line-height: 1.55;
-    font-weight: 300;
-  }
-
-  .card-body { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 20px; }
-
-  .card-section-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .6px;
-    color: var(--text-low);
-    margin-bottom: 5px;
-  }
-  .card-capabilities {
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
-  .cap-pill {
-    font-size: 12px;
-    padding: 3px 9px;
-    border-radius: 4px;
-    background: var(--tag-bg);
-    color: var(--text-mid);
-    font-weight: 500;
-  }
-
-  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-  .card-tag {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    color: var(--text-low);
-  }
-
-  .card-links {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 18px;
-  }
-  .card-link {
-    font-size: 13px;
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-    display: flex; align-items: center; gap: 4px;
-  }
-  .card-link:hover { text-decoration: underline; }
-  .card-link svg { width: 13px; height: 13px; }
-
-  /* empty */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-low);
-    font-size: 15px;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .layout { grid-template-columns: 1fr; padding: 24px 18px 60px; }
-    .sidebar { display: flex; flex-wrap: wrap; gap: 16px; }
-    .sidebar-section-label { width: 100%; margin-top: 0; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Vale - Autonomous Agent Resources</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
 
-<!-- TOP BAR -->
-<header class="topbar">
-  <a class="topbar-logo" href="#">
-    <div class="dot">
-      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="7" cy="7" r="3" fill="#fff"/>
-        <circle cx="7" cy="7" r="5.5" stroke="#fff" stroke-width="1.2" fill="none" opacity=".5"/>
-      </svg>
-    </div>
-    <span>Echo Vale</span>
-  </a>
-  <span class="topbar-meta" id="lastUpdated"></span>
-</header>
+        function App() {
+            const [data, setData] = useState(null);
+            const [selectedCategory, setSelectedCategory] = useState('all');
+            const [selectedTags, setSelectedTags] = useState([]);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [loading, setLoading] = useState(true);
 
-<!-- LAYOUT -->
-<div class="layout">
+            useEffect(() => {
+                // Load your JSON data here
+                // For now, using the embedded data you provided
+                const jsonData = {"version":"2.0","lastUpdated":"2026-02-03T00:00:00Z","metadata":{"title":"Autonomous Agent Resources","description":"Curated directory for AI agent developers","maintainer":"Echo Vale","totalResources":30,"dataVersion":"2.0"},"categories":[{"id":"automation","name":"Automation"},{"id":"data-enrichment","name":"Data Enrichment"},{"id":"enterprise-productivity","name":"Enterprise Productivity"},{"id":"crm-automation","name":"CRM Automation"},{"id":"dashboard-integration","name":"Dashboard Integration"}],"tags":["AI","Automation","Productivity","Data Enrichment","CRM"],"resources":[{"id":"resource-1","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Automation"],"github":"https://github.com/platform-name","name":"Kore.ai","official_url":"https://www.kore.ai/","documentation_url":"https://www.kore.ai/docs","pricing_model":"Session-based, usage-based, and per-seat pricing models; volume discounts for larger deployments.","description":"Kore.ai provides an enterprise-grade platform for building, deploying, and managing AI agents across various applications, with a strong focus on governance and observability.","key_capabilities":["Multi-agent orchestration","AI governance dashboard"],"use_cases":["Enterprise-grade AI deployment","Governance and observability"],"developer_experience":"Comprehensive tools for enterprise-level development.","reason":"Enterprise leader with Fortune 500 clients and a strong focus on AI governance."},{"id":"resource-2","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","No-Code"],"github":"https://github.com/platform-name","name":"FlowHunt","official_url":"https://www.flowhunt.io/","documentation_url":"https://www.flowhunt.io/docs","pricing_model":"Free tier available; Pro plans starting at $29/month.","description":"A no-code AI agent building platform that enables organizations to create, deploy, and manage agents seamlessly across various applications.","key_capabilities":["Drag-and-drop interface","Multi-model support"],"use_cases":["No-code agent development","Omnichannel deployment"],"developer_experience":"User-friendly interface promoting rapid development.","reason":"Innovative no-code approach democratizing agent development with a drag-and-drop interface."},{"id":"resource-3","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Web Automation"],"github":"https://github.com/platform-name","name":"CapSolver","official_url":"https://www.capsolver.com/","description":"Provides a robust API for handling web challenges, enabling AI agents to navigate websites and perform automated tasks successfully.","key_capabilities":["Integration with various AI agent frameworks","Programmatic handling of web challenges"],"use_cases":["Automated web tasks","High-volume web navigation"],"developer_experience":"Supports seamless integration with existing frameworks.","reason":"Strong technical capabilities with advanced reasoning for web navigation."},{"id":"resource-4","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","AI Trends"],"github":"https://github.com/platform-name","name":"Relevance AI","official_url":"https://www.relevance.ai/","description":"Offers a no-code platform for building AI agents focused on rapid development and deployment, featuring extensive integrations with business applications.","key_capabilities":["No-code development","Extensive business integrations"],"use_cases":["Rapid deployment of AI agents","Integration with business systems"],"developer_experience":"Streamlined process for building AI solutions.","reason":"Rapid development and deployment capabilities with extensive integrations."},{"id":"resource-5","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Enterprise"],"github":"https://github.com/platform-name","name":"Microsoft Copilot Studio","official_url":"https://www.microsoft.com/en-us/microsoft-365/copilot","description":"Integrates AI capabilities within the Microsoft ecosystem, allowing users to build agents that optimize productivity across Microsoft applications.","key_capabilities":["Integration with Microsoft tools","Productivity optimization"],"use_cases":["Enhancing workflows in Microsoft applications"],"developer_experience":"Seamless integration into existing Microsoft products.","reason":"Enterprise readiness with deep integration into Microsoft's productivity tools."},{"id":"resource-6","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Cloud"],"github":"https://github.com/platform-name","name":"Google Vertex AI","official_url":"https://cloud.google.com/vertex-ai","description":"A comprehensive platform for building, training, and deploying scalable AI agents, integrated with Google Cloud services for enhanced capabilities.","key_capabilities":["Scalable AI deployment","Training capabilities"],"use_cases":["Production-ready AI agents","Integration with Google services"],"developer_experience":"Powerful tools for cloud-based development.","reason":"Robust infrastructure for production deployment with multimodal processing capabilities."},{"id":"resource-7","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Automation"],"github":"https://github.com/platform-name","name":"Zapier Central","official_url":"https://zapier.com/","description":"Leverages extensive integration ecosystem to create intelligent agents that automate workflows across thousands of applications.","key_capabilities":["Integration with thousands of apps","Workflow automation"],"use_cases":["Automating complex workflows","Connecting various applications"],"developer_experience":"User-friendly interface for automation.","reason":"Connects to over 7,000 applications, enabling automation of complex workflows."},{"id":"resource-8","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Insights"],"github":"https://github.com/platform-name","name":"Machine Learning Mastery","official_url":"https://machinelearningmastery.com/7-agentic-ai-trends-to-watch-in-2026/","description":"Discusses emerging trends in agentic AI, highlighting the shift from prototypes to production-ready systems.","key_capabilities":["Trends analysis","AI insights"],"use_cases":["Understanding agentic AI trends","Strategic planning"],"developer_experience":"Educational resources for developers.","reason":"Provides insights on the future of agentic AI and key trends shaping the industry."},{"id":"resource-9","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Business"],"github":"https://github.com/platform-name","name":"MIT Sloan","official_url":"https://mitsloan.mit.edu/ideas-made-to-matter/ai-agents-tech-circularity-whats-ahead-platforms-2026","description":"Discusses the emergence of autonomous agents capable of acting on behalf of users, emphasizing the need for businesses to adapt.","key_capabilities":["Critical business insights","Adaptation strategies"],"use_cases":["Implementing agentic AI","Business adaptation"],"developer_experience":"Research-driven insights for businesses.","reason":"Highlights critical insights into the adaptation of platforms for agentic AI."},{"id":"resource-10","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Documentation"],"github":"https://github.com/platform-name","name":"FlowHunt Documentation","official_url":"https://www.flowhunt.io/docs","description":"Documentation for building and managing agents on the FlowHunt platform.","key_capabilities":["Comprehensive resources","User guides"],"use_cases":["Effective agent development","User support"],"developer_experience":"Thorough documentation for developers.","reason":"Provides comprehensive resources for users to effectively leverage agent capabilities."},{"id":"resource-11","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Documentation"],"github":"https://github.com/platform-name","name":"Kore.ai Documentation","official_url":"https://www.kore.ai/docs","description":"Documentation for building and managing AI agents on the Kore.ai platform.","key_capabilities":["Extensive documentation","User support"],"use_cases":["Supporting enterprise-grade development","User guidance"],"developer_experience":"Comprehensive documentation for developers.","reason":"Offers extensive documentation to support enterprise-grade AI agent development."},{"id":"resource-12","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Cloud"],"github":"https://github.com/platform-name","name":"Google Cloud AI","official_url":"https://cloud.google.com/ai","description":"A suite of AI and machine learning services to build and deploy intelligent applications.","key_capabilities":["AI tools and services","Enterprise support"],"use_cases":["Building AI applications","Deploying intelligent solutions"],"developer_experience":"Comprehensive tools for AI development.","reason":"Comprehensive tools and services for AI applications with enterprise support."},{"id":"resource-13","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","AI Solutions"],"github":"https://github.com/platform-name","name":"IBM Watson","official_url":"https://www.ibm.com/watson","description":"Offers various AI tools and services, including natural language processing and machine learning capabilities.","key_capabilities":["Natural language processing","Machine learning"],"use_cases":["Enterprise AI solutions","Natural language interactions"],"developer_experience":"Wide range of tools for diverse use cases.","reason":"Established enterprise leader with a wide range of AI solutions."},{"id":"resource-14","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Language Models"],"github":"https://github.com/platform-name","name":"OpenAI API","official_url":"https://openai.com/api","description":"Provides access to powerful AI language models for building intelligent applications.","key_capabilities":["Language processing","AI model access"],"use_cases":["Building language-based applications","Natural language interactions"],"developer_experience":"Access to cutting-edge AI language models enabling innovative applications.","reason":"Access to cutting-edge AI language models enabling innovative applications."},{"id":"resource-15","type":"Platform","category":"automation","officialFramework":false,"featured":true,"addedDate":"2026-02-03","tags":["AI Agents","Framework"],"github":"https://github.com/platform-name","name":"Haystack","official_url":"https://haystack.deepset.ai/","description":"A framework for building search systems powered by natural language processing.","key_capabilities":["Natural language search","Custom search solutions"],"use_cases":["Building intelligent search systems","Natural language processing tasks"],"developer_experience":"Strong open-source community and flexibility for developing custom search solutions.","reason":"Strong open-source community and flexibility for developing custom search solutions."}]};
+                
+                setData(jsonData);
+                setLoading(false);
+            }, []);
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-section-label">Categories</div>
-    <div id="catList"></div>
+            // Dynamically filter resources based on category, tags, and search
+            const filteredResources = useMemo(() => {
+                if (!data) return [];
+                
+                let filtered = data.resources;
 
-    <div class="sidebar-section-label">Tags</div>
-    <div class="tag-cloud" id="tagCloud"></div>
-  </aside>
+                // Filter by category
+                if (selectedCategory !== 'all') {
+                    filtered = filtered.filter(r => r.category === selectedCategory);
+                }
 
-  <!-- MAIN -->
-  <main class="main">
-    <div class="hero">
-      <h1 id="heroTitle"></h1>
-      <p id="heroDesc"></p>
-      <div class="hero-stats" id="heroStats"></div>
-    </div>
+                // Filter by tags
+                if (selectedTags.length > 0) {
+                    filtered = filtered.filter(r => 
+                        r.tags && r.tags.some(tag => selectedTags.includes(tag))
+                    );
+                }
 
-    <div class="search-wrap">
-      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="7.5" cy="7.5" r="5"/>
-        <line x1="11.2" y1="11.2" x2="16" y2="16"/>
-      </svg>
-      <input class="search-input" id="searchInput" type="text" placeholder="Search resources…" autocomplete="off" />
-    </div>
+                // Filter by search query
+                if (searchQuery.trim()) {
+                    const query = searchQuery.toLowerCase();
+                    filtered = filtered.filter(r => 
+                        r.name.toLowerCase().includes(query) ||
+                        r.description.toLowerCase().includes(query) ||
+                        (r.tags && r.tags.some(tag => tag.toLowerCase().includes(query)))
+                    );
+                }
 
-    <div class="result-bar" id="resultBar"></div>
-    <div class="cards" id="cardList"></div>
-  </main>
-</div>
+                return filtered;
+            }, [data, selectedCategory, selectedTags, searchQuery]);
 
-<script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
-// Netlify serves the JSON from the same repo as a static asset — use the
-// local path.  No cross-origin fetch needed at all.
-const JSON_URL = '/autonomous-agent-apis.json';
+            const toggleTag = (tag) => {
+                setSelectedTags(prev => 
+                    prev.includes(tag) 
+                        ? prev.filter(t => t !== tag)
+                        : [...prev, tag]
+                );
+            };
 
-// ── INTERNAL DATA MODEL ───────────────────────────────────────────────────
-let DATA = { metadata: {}, categories: [], resources: [] };
+            if (loading || !data) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+                        <div className="text-white text-2xl">Loading...</div>
+                    </div>
+                );
+            }
 
-// ── STATE ─────────────────────────────────────────────────────────────────
-let activeCategory = null;
-let activeTags     = [];
-let searchQuery    = '';
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                    {/* Header */}
+                    <header className="bg-black bg-opacity-30 backdrop-blur-md border-b border-purple-500/20">
+                        <div className="container mx-auto px-4 py-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h1 className="text-3xl font-bold text-white mb-1">{data.metadata.title}</h1>
+                                    <p className="text-purple-200">{data.metadata.description}</p>
+                                </div>
+                                <div className="text-right text-sm text-purple-300">
+                                    <div>v{data.version}</div>
+                                    <div>{data.metadata.totalResources} Resources</div>
+                                    <div className="text-xs mt-1">Updated: {new Date(data.lastUpdated).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
 
-// ── MAPPING ───────────────────────────────────────────────────────────────
-// Two possible shapes can come back from the JSON file:
-//
-//  A) "v2 full" — has .resources[], .categories[], .tags[], .metadata
-//     (the 10-resource backend payload)
-//  B) "flat"    — has .autonomous_agent_apis[] with {name, url, description,
-//     type, last_updated}  (the 4-resource GitHub snapshot)
-//
-// Detect which one arrived and normalise both into the same internal model.
+                    <div className="container mx-auto px-4 py-8">
+                        {/* Search Bar */}
+                        <div className="mb-8">
+                            <div className="relative max-w-2xl mx-auto">
+                                <input
+                                    type="text"
+                                    placeholder="Search resources..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full px-6 py-4 bg-white bg-opacity-10 backdrop-blur-md border border-purple-500/30 rounded-xl text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                />
+                                <i className="fas fa-search absolute right-6 top-1/2 transform -translate-y-1/2 text-purple-300"></i>
+                            </div>
+                        </div>
 
-function slugify(str) {
-  return str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-}
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                            {/* Sidebar Filters */}
+                            <div className="lg:col-span-1">
+                                <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 border border-purple-500/20 sticky top-4">
+                                    {/* Dynamic Categories */}
+                                    <div className="mb-6">
+                                        <h3 className="text-white font-semibold mb-3 flex items-center">
+                                            <i className="fas fa-folder mr-2"></i>
+                                            Categories
+                                        </h3>
+                                        <div className="space-y-2">
+                                            <button
+                                                onClick={() => setSelectedCategory('all')}
+                                                className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
+                                                    selectedCategory === 'all'
+                                                        ? 'bg-purple-600 text-white'
+                                                        : 'text-purple-200 hover:bg-purple-500/20'
+                                                }`}
+                                            >
+                                                All Resources ({data.resources.length})
+                                            </button>
+                                            {data.categories.map(cat => {
+                                                const count = data.resources.filter(r => r.category === cat.id).length;
+                                                return (
+                                                    <button
+                                                        key={cat.id}
+                                                        onClick={() => setSelectedCategory(cat.id)}
+                                                        className={`w-full text-left px-3 py-2 rounded-lg transition-all ${
+                                                            selectedCategory === cat.id
+                                                                ? 'bg-purple-600 text-white'
+                                                                : 'text-purple-200 hover:bg-purple-500/20'
+                                                        }`}
+                                                    >
+                                                        {cat.name} ({count})
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
 
-// ── Schema A: v2 full — almost ready, just normalise a couple of fields so
-//    the card template can use one consistent set of names.
-function mapV2Full(json) {
-  return {
-    metadata: {
-      ...json.metadata,
-      // lastUpdated lives on the JSON root in v2, not inside metadata
-      lastUpdated: json.lastUpdated || json.metadata.lastUpdated || new Date().toISOString()
-    },
-    categories: json.categories,
-    resources: json.resources.map(r => ({
-      ...r,
-      last_updated: r.last_updated || r.addedDate || ''   // card template uses last_updated
-    }))
-  };
-}
+                                    {/* Dynamic Tags */}
+                                    {data.tags && (
+                                        <div>
+                                            <h3 className="text-white font-semibold mb-3 flex items-center">
+                                                <i className="fas fa-tags mr-2"></i>
+                                                Tags
+                                            </h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {data.tags.map(tag => (
+                                                    <button
+                                                        key={tag}
+                                                        onClick={() => toggleTag(tag)}
+                                                        className={`px-3 py-1 rounded-full text-sm transition-all ${
+                                                            selectedTags.includes(tag)
+                                                                ? 'bg-purple-600 text-white'
+                                                                : 'bg-purple-500/20 text-purple-200 hover:bg-purple-500/40'
+                                                        }`}
+                                                    >
+                                                        {tag}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
 
-// ── Schema B: flat list, derive categories + tags from the `type` field ────
-function mapFlat(json) {
-  const items  = json.autonomous_agent_apis;
-  const catMap = {};
+                                    {/* Clear Filters */}
+                                    {(selectedCategory !== 'all' || selectedTags.length > 0 || searchQuery) && (
+                                        <button
+                                            onClick={() => {
+                                                setSelectedCategory('all');
+                                                setSelectedTags([]);
+                                                setSearchQuery('');
+                                            }}
+                                            className="w-full mt-4 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-200 rounded-lg transition-all"
+                                        >
+                                            <i className="fas fa-times mr-2"></i>
+                                            Clear Filters
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
 
-  const resources = items.map((item, i) => {
-    const tags   = item.type.split(/\s*\|\s*/);
-    const catId  = slugify(tags[0]);
-    if (!catMap[catId]) catMap[catId] = tags[0];
+                            {/* Resources Grid */}
+                            <div className="lg:col-span-3">
+                                {filteredResources.length === 0 ? (
+                                    <div className="text-center py-12 text-purple-300">
+                                        <i className="fas fa-search text-6xl mb-4 opacity-50"></i>
+                                        <p className="text-xl">No resources found</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid gap-6">
+                                        {filteredResources.map(resource => (
+                                            <ResourceCard key={resource.id} resource={resource} categories={data.categories} />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
 
-    return {
-      id:                 'resource-' + (i + 1),
-      name:               item.name,
-      type:               item.type,
-      category:           catId,
-      tags:               tags,
-      official_url:       item.url,
-      documentation_url:  null,
-      github:             null,
-      description:        item.description,
-      key_capabilities:   [],
-      use_cases:          [],
-      last_updated:       item.last_updated
-    };
-  });
+        function ResourceCard({ resource, categories }) {
+            const [expanded, setExpanded] = useState(false);
+            
+            // Get category name from ID
+            const categoryName = categories.find(c => c.id === resource.category)?.name || resource.category;
 
-  const categories = Object.entries(catMap).map(([id, name]) => ({ id, name }));
-  const latestDate = resources.reduce((best, r) =>
-    (!best || r.last_updated > best) ? r.last_updated : best, null);
+            return (
+                <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/50 transition-all">
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-2xl font-bold text-white">{resource.name}</h3>
+                                {resource.featured && (
+                                    <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-xs font-semibold">
+                                        <i className="fas fa-star mr-1"></i>Featured
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-purple-300 mb-3">
+                                <span className="px-2 py-1 bg-purple-500/20 rounded">
+                                    {categoryName}
+                                </span>
+                                {resource.type && (
+                                    <span className="px-2 py-1 bg-blue-500/20 rounded text-blue-300">
+                                        {resource.type}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
-  return {
-    metadata: {
-      title:          'Autonomous Agent Resources',
-      description:    'Curated directory for AI agent developers',
-      totalResources: resources.length,
-      lastUpdated:    latestDate ? latestDate + 'T00:00:00Z' : new Date().toISOString()
-    },
-    categories,
-    resources
-  };
-}
+                    <p className="text-purple-100 mb-4">{resource.description}</p>
 
-// ── Pick the right mapper automatically ─────────────────────────────────────
-function mapRepoData(json) {
-  if (json.resources && Array.isArray(json.resources)) return mapV2Full(json);   // Schema A
-  if (json.autonomous_agent_apis)                      return mapFlat(json);     // Schema B
-  throw new Error('Unrecognised JSON shape — no .resources or .autonomous_agent_apis found');
-}
+                    {/* Reason - Why it's included */}
+                    {resource.reason && (
+                        <div className="mb-4 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                            <div className="text-xs font-semibold text-purple-300 mb-1">WHY IT'S INCLUDED</div>
+                            <p className="text-sm text-purple-100">{resource.reason}</p>
+                        </div>
+                    )}
 
-// ── HELPERS ───────────────────────────────────────────────────────────────
-function catCountMap() {
-  const m = {};
-  DATA.resources.forEach(r => { m[r.category] = (m[r.category] || 0) + 1; });
-  return m;
-}
+                    {/* Key Capabilities */}
+                    {resource.key_capabilities && resource.key_capabilities.length > 0 && (
+                        <div className="mb-4">
+                            <div className="text-xs font-semibold text-purple-300 mb-2">KEY CAPABILITIES</div>
+                            <div className="flex flex-wrap gap-2">
+                                {resource.key_capabilities.map((cap, idx) => (
+                                    <span key={idx} className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">
+                                        <i className="fas fa-check-circle mr-1"></i>{cap}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
-function allUniqueTags() {
-  const set = new Set();
-  DATA.resources.forEach(r => r.tags.forEach(t => set.add(t)));
-  return [...set].sort();
-}
+                    {/* Use Cases */}
+                    {resource.use_cases && resource.use_cases.length > 0 && (
+                        <div className="mb-4">
+                            <div className="text-xs font-semibold text-purple-300 mb-2">USE CASES</div>
+                            <div className="flex flex-wrap gap-2">
+                                {resource.use_cases.map((useCase, idx) => (
+                                    <span key={idx} className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                                        <i className="fas fa-lightbulb mr-1"></i>{useCase}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
-function filteredResources() {
-  return DATA.resources.filter(r => {
-    if (activeCategory && r.category !== activeCategory) return false;
-    if (activeTags.length && !activeTags.every(t => r.tags.includes(t)))  return false;
-    if (searchQuery) {
-      const q   = searchQuery.toLowerCase();
-      const hay = `${r.name} ${r.description} ${r.tags.join(' ')} ${r.key_capabilities.join(' ')} ${r.use_cases.join(' ')}`.toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
-    return true;
-  });
-}
+                    {/* Developer Experience */}
+                    {resource.developer_experience && (
+                        <div className="mb-4 p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+                            <div className="text-xs font-semibold text-indigo-300 mb-1">DEVELOPER EXPERIENCE</div>
+                            <p className="text-sm text-indigo-100">{resource.developer_experience}</p>
+                        </div>
+                    )}
 
-// ── RENDER ────────────────────────────────────────────────────────────────
-function render() {
-  renderCats();
-  renderTags();
-  renderCards();
-}
+                    {/* Pricing Model */}
+                    {resource.pricing_model && (
+                        <div className="mb-4 p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                            <div className="text-xs font-semibold text-emerald-300 mb-1">PRICING</div>
+                            <p className="text-sm text-emerald-100">{resource.pricing_model}</p>
+                        </div>
+                    )}
 
-function renderCats() {
-  const counts  = catCountMap();
-  const el      = document.getElementById('catList');
-  const allActive = !activeCategory ? ' active' : '';
-  let html = `<button class="cat-btn${allActive}" onclick="setCat(null)">
-    <span>All Categories</span>
-    <span class="cat-count">${DATA.resources.length}</span>
-  </button>`;
-  DATA.categories.forEach(c => {
-    const active = activeCategory === c.id ? ' active' : '';
-    html += `<button class="cat-btn${active}" onclick="setCat('${c.id}')">
-      <span>${c.name}</span>
-      <span class="cat-count">${counts[c.id] || 0}</span>
-    </button>`;
-  });
-  el.innerHTML = html;
-}
+                    {/* Tags */}
+                    {resource.tags && resource.tags.length > 0 && (
+                        <div className="mb-4">
+                            <div className="flex flex-wrap gap-2">
+                                {resource.tags.map((tag, idx) => (
+                                    <span key={idx} className="px-2 py-1 bg-purple-500/20 text-purple-200 rounded text-xs">
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
-function renderTags() {
-  const tags = allUniqueTags();
-  const el   = document.getElementById('tagCloud');
-  el.innerHTML = tags.map(t => {
-    const active = activeTags.includes(t) ? ' active' : '';
-    return `<button class="tag-pill${active}" onclick="toggleTag('${t.replace(/'/g, "\\'")}')">
-      ${t}
-    </button>`;
-  }).join('');
-}
+                    {/* Links */}
+                    <div className="flex flex-wrap gap-3 pt-4 border-t border-purple-500/20">
+                        {resource.official_url && (
+                            <a
+                                href={resource.official_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all flex items-center gap-2"
+                            >
+                                <i className="fas fa-external-link-alt"></i>
+                                Visit Site
+                            </a>
+                        )}
+                        {resource.documentation_url && (
+                            <a
+                                href={resource.documentation_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all flex items-center gap-2"
+                            >
+                                <i className="fas fa-book"></i>
+                                Documentation
+                            </a>
+                        )}
+                        {resource.github && (
+                            <a
+                                href={resource.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all flex items-center gap-2"
+                            >
+                                <i className="fab fa-github"></i>
+                                GitHub
+                            </a>
+                        )}
+                    </div>
 
-function renderCards() {
-  const results = filteredResources();
-  document.getElementById('resultBar').textContent =
-    results.length === DATA.resources.length
-      ? `Showing all ${results.length} resources`
-      : `${results.length} resource${results.length !== 1 ? 's' : ''} match your filters`;
+                    {/* Added Date */}
+                    {resource.addedDate && (
+                        <div className="mt-4 text-xs text-purple-400">
+                            Added: {new Date(resource.addedDate).toLocaleDateString()}
+                        </div>
+                    )}
+                </div>
+            );
+        }
 
-  const el = document.getElementById('cardList');
-  if (!results.length) {
-    el.innerHTML = '<div class="empty-state">No resources match your current filters.<br><small>Try broadening your search or clearing a filter.</small></div>';
-    return;
-  }
-  el.innerHTML = results.map(r => `
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title-row">
-          <span class="card-name"><a href="${r.official_url}" target="_blank" rel="noopener">${r.name}</a></span>
-          <span class="badge">${r.tags[0]}</span>
-        </div>
-        <span class="badge-pricing">${r.pricing_model || ('Updated ' + r.last_updated)}</span>
-      </div>
-      <p class="card-desc">${r.description}</p>
-
-      <!-- Capabilities / Use Cases only render if the repo supplies them -->
-      ${(r.key_capabilities.length || r.use_cases.length) ? `
-      <div class="card-body">
-        ${r.key_capabilities.length ? `<div>
-          <div class="card-section-label">Capabilities</div>
-          <div class="card-capabilities">${r.key_capabilities.map(c => `<span class="cap-pill">${c}</span>`).join('')}</div>
-        </div>` : ''}
-        ${r.use_cases.length ? `<div>
-          <div class="card-section-label">Use Cases</div>
-          <div class="card-capabilities">${r.use_cases.map(u => `<span class="cap-pill">${u}</span>`).join('')}</div>
-        </div>` : ''}
-      </div>` : ''}
-
-      <!-- Type pills (all tokens) shown as tags row -->
-      <div class="card-tags">${r.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
-
-      <!-- Links: only render anchors for URLs that actually exist -->
-      <div class="card-links">
-        <a class="card-link" href="${r.official_url}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8h4M8 6v4M3 13L13 3M3 3h10v10"/></svg>
-          Website
-        </a>
-        ${r.documentation_url ? `<a class="card-link" href="${r.documentation_url}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="1" width="12" height="14" rx="2"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="8" y2="11"/></svg>
-          Docs
-        </a>` : ''}
-        ${r.github ? `<a class="card-link" href="${r.github}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M6 11c0-1 .5-2 2-2s2 1 2 2"/></svg>
-          GitHub
-        </a>` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-
-// ── ACTIONS ───────────────────────────────────────────────────────────────
-function setCat(id) { activeCategory = id; render(); }
-function toggleTag(t) {
-  const i = activeTags.indexOf(t);
-  i === -1 ? activeTags.push(t) : activeTags.splice(i, 1);
-  render();
-}
-document.getElementById('searchInput').addEventListener('input', e => {
-  searchQuery = e.target.value.trim();
-  render();
-});
-
-// ── LOADING / ERROR STATES ────────────────────────────────────────────────
-function showLoading() {
-  document.getElementById('cardList').innerHTML =
-    '<div class="empty-state" style="padding:80px 20px;">Loading resources…<br><small style="color:var(--text-low)">Fetching from GitHub</small></div>';
-}
-function showError(msg) {
-  document.getElementById('cardList').innerHTML =
-    `<div class="empty-state" style="padding:80px 20px;"><strong style="color:#c0392b;">Failed to load resources</strong><br><small>${msg}</small></div>`;
-}
-
-// ── APPLY ─────────────────────────────────────────────────────────────────
-function applyData(json) {
-  DATA = mapRepoData(json);
-
-  document.getElementById('heroTitle').textContent  = DATA.metadata.title;
-  document.getElementById('heroDesc').textContent   = DATA.metadata.description;
-  document.getElementById('heroStats').innerHTML    = `
-    <div class="stat"><div class="stat-num">${DATA.metadata.totalResources}</div><div class="stat-label">Resources</div></div>
-    <div class="stat"><div class="stat-num">${DATA.categories.length}</div><div class="stat-label">Categories</div></div>
-    <div class="stat"><div class="stat-num">${allUniqueTags().length}</div><div class="stat-label">Tags</div></div>`;
-  document.getElementById('lastUpdated').textContent =
-    'Updated ' + new Date(DATA.metadata.lastUpdated).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-
-  render();
-}
-
-// ── INIT: fetch → map → render ────────────────────────────────────────────
-showLoading();
-
-fetch(JSON_URL)
-  .then(res => {
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  })
-  .then(json => {
-    applyData(json);
-  })
-  .catch(err => {
-    console.error('Fetch failed:', err);
-    showError(`Could not load data: ${err.message}`);
-  });
-</script>
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
