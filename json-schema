@@ -1,0 +1,236 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Autonomous Agent Resources API Schema",
+  "description": "JSON structure expected by the Agent Resources Library UI",
+  "type": "object",
+  "required": ["version", "lastUpdated", "metadata", "resources"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "API version number",
+      "example": "2.0"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last data update",
+      "example": "2026-02-03T00:00:00Z"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "General metadata about the resource collection",
+      "required": ["title", "description", "maintainer"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the resource directory",
+          "example": "Autonomous Agent Resources"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the directory purpose",
+          "example": "Curated directory for AI agent developers"
+        },
+        "maintainer": {
+          "type": "string",
+          "description": "Name of the person or organization maintaining the directory",
+          "example": "Echo Vale"
+        },
+        "totalResources": {
+          "type": "integer",
+          "description": "Total count of resources (optional, calculated if not provided)",
+          "example": 30
+        },
+        "dataVersion": {
+          "type": "string",
+          "description": "Version of the data schema",
+          "example": "2.0"
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "description": "Available resource categories (optional, can be derived from resources)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "automation"
+          },
+          "name": {
+            "type": "string",
+            "example": "Automation"
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Available filter tags for the UI",
+      "items": {
+        "type": "string"
+      },
+      "example": ["AI", "Automation", "Productivity", "Data Enrichment", "CRM"]
+    },
+    "resources": {
+      "type": "array",
+      "description": "Array of resource objects - the main content",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "category", "tags"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the resource",
+            "example": "resource-1"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the platform/resource",
+            "example": "Kore.ai"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of resource (e.g., Platform, Tool, Framework)",
+            "example": "Platform"
+          },
+          "category": {
+            "type": "string",
+            "description": "Primary category (kebab-case recommended)",
+            "example": "automation"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of what the resource does",
+            "example": "Kore.ai provides an enterprise-grade platform for building, deploying, and managing AI agents across various applications."
+          },
+          "official_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Main website URL (optional but recommended)",
+            "example": "https://www.kore.ai/"
+          },
+          "documentation_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Documentation URL (optional)",
+            "example": "https://www.kore.ai/docs"
+          },
+          "github": {
+            "type": "string",
+            "format": "uri",
+            "description": "GitHub repository URL (optional)",
+            "example": "https://github.com/platform-name"
+          },
+          "tags": {
+            "type": "array",
+            "description": "Array of tags for filtering",
+            "items": {
+              "type": "string"
+            },
+            "example": ["AI Agents", "Automation", "Enterprise"]
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "Whether this resource should be featured (optional, defaults to false)",
+            "example": true
+          },
+          "addedDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when resource was added (optional)",
+            "example": "2026-02-03"
+          },
+          "key_capabilities": {
+            "type": "array",
+            "description": "List of key capabilities/features (optional but recommended for display)",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Multi-agent orchestration", "AI governance dashboard"]
+          },
+          "use_cases": {
+            "type": "array",
+            "description": "List of primary use cases (optional but recommended for display)",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Enterprise-grade AI deployment", "Governance and observability"]
+          },
+          "pricing_model": {
+            "type": "string",
+            "description": "Description of pricing structure (optional)",
+            "example": "Free tier available; Pro plans starting at $29/month."
+          },
+          "developer_experience": {
+            "type": "string",
+            "description": "Description of developer experience (optional, not currently displayed in UI)",
+            "example": "Comprehensive tools for enterprise-level development."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for inclusion in directory (optional, not currently displayed in UI)",
+            "example": "Enterprise leader with Fortune 500 clients."
+          },
+          "officialFramework": {
+            "type": "boolean",
+            "description": "Whether it's an official framework (optional, not currently displayed in UI)",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "version": "2.0",
+      "lastUpdated": "2026-02-03T00:00:00Z",
+      "metadata": {
+        "title": "Autonomous Agent Resources",
+        "description": "Curated directory for AI agent developers",
+        "maintainer": "Echo Vale",
+        "totalResources": 3,
+        "dataVersion": "2.0"
+      },
+      "categories": [
+        {
+          "id": "automation",
+          "name": "Automation"
+        },
+        {
+          "id": "data-enrichment",
+          "name": "Data Enrichment"
+        }
+      ],
+      "tags": ["AI", "Automation", "No-Code"],
+      "resources": [
+        {
+          "id": "resource-1",
+          "type": "Platform",
+          "category": "automation",
+          "officialFramework": false,
+          "featured": true,
+          "addedDate": "2026-02-03",
+          "tags": ["AI Agents", "Automation"],
+          "name": "Example Platform",
+          "official_url": "https://www.example.com/",
+          "documentation_url": "https://www.example.com/docs",
+          "github": "https://github.com/example/repo",
+          "pricing_model": "Free tier available; Pro plans starting at $29/month.",
+          "description": "An example platform for building and deploying AI agents with enterprise-grade capabilities.",
+          "key_capabilities": [
+            "Multi-agent orchestration",
+            "Real-time monitoring"
+          ],
+          "use_cases": [
+            "Enterprise automation",
+            "Workflow optimization"
+          ],
+          "developer_experience": "User-friendly with comprehensive documentation.",
+          "reason": "Strong community support and proven track record."
+        }
+      ]
+    }
+  ]
+}
